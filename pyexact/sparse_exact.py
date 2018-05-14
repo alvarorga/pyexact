@@ -5,9 +5,12 @@ import numpy as np
 from numba import njit
 from scipy.sparse import csr_matrix
 
+<<<<<<< HEAD
 # from bitwise_funcs import binom
 # from bitwise_funcs import generate_states
 
+=======
+>>>>>>> bb4cf6acffb44a031e612169142377294b1b266a
 
 @njit()
 def count_nnz_off_diagonal(A):
