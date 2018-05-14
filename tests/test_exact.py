@@ -4,7 +4,7 @@
 import unittest
 import numpy as np
 
-import exact
+from pyexact import exact
 
 
 class ManyBodyOperatorsTestCase(unittest.TestCase):

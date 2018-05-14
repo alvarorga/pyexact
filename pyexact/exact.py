@@ -3,7 +3,7 @@
 import numpy as np
 from numba import njit, u2, f8
 
-from bitwise_funcs import generate_states
+from pyexact.bitwise_funcs import generate_states
 
 
 @njit(f8[:, :](u2, u2, f8[:, :], f8[:, :]))

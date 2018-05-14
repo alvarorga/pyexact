@@ -3,8 +3,8 @@
 import unittest
 import numpy as np
 
-import exact
-import sparse_exact
+from pyexact import exact
+from pyexact import sparse_exact
 
 
 class SparseManyBodyOperatorsTestCase(unittest.TestCase):
