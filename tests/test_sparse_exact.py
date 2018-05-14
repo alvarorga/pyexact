@@ -7,14 +7,6 @@ import exact
 import sparse_exact
 
 
-class BinomTestCase(unittest.TestCase):
-    """Tests for the binomial coefficient function."""
-
-    def test_binom_of_6_3(self):
-        """Test the binom of (6 3) == 20."""
-        self.assertEqual(sparse_exact.binom(6, 3), 20)
-
-
 class SparseManyBodyOperatorsTestCase(unittest.TestCase):
     """Test for the functions that build sparse many body operators."""
 

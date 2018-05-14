@@ -23,7 +23,8 @@ class BinomTestCase(unittest.TestCase):
 
     def test_binoms_with_0(self):
         """Test that if n=0, the binom is 1."""
-        pass
+        self.assertEqual(binom(6, 0), 1)
+        self.assertEqual(binom(3, 0), 1)
 
 
 class CountBitsTestCase(unittest.TestCase):
@@ -49,3 +50,7 @@ class GenerateStatesTestCase(unittest.TestCase):
         """Test generated states for some combinations."""
         s = np.array([3, 5, 6, 9, 10, 12])
         self.assertTrue(np.allclose(generate_states(4, 2), s))
+        s = np.array([7, 11, 13, 14])
+        self.assertTrue(np.allclose(generate_states(4, 3), s))
+        s = np.array([7, 11, 13, 14, 19, 21, 22, 25, 26, 28])
+        self.assertTrue(np.allclose(generate_states(5, 3), s))

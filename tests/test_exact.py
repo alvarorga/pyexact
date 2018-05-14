@@ -7,14 +7,6 @@ import numpy as np
 import exact
 
 
-class BinomTestCase(unittest.TestCase):
-    """Tests for the binomial coefficient function."""
-
-    def test_binom_of_6_3(self):
-        """Check that the binom of (6 3) == 20."""
-        self.assertEqual(exact.binom(6, 3), 20)
-
-
 class ManyBodyOperatorsTestCase(unittest.TestCase):
     """Test for the functions that build many body operators."""
 
