@@ -5,12 +5,8 @@ import numpy as np
 from numba import njit
 from scipy.sparse import csr_matrix
 
-<<<<<<< HEAD
 # from bitwise_funcs import binom
 # from bitwise_funcs import generate_states
-
-=======
->>>>>>> bb4cf6acffb44a031e612169142377294b1b266a
 
 @njit()
 def count_nnz_off_diagonal(A):
@@ -195,6 +191,7 @@ def build_sparse_mb_operator(L, N, J, D):
     if print_time_and_sparsity_info:
         print('hey')
         print('Number of states: {}'.format(ns))
+        print('hey')
         print('Sparsity = {:4.3f}%'.format(100*nnz/ns**2))
         print('Building the vals, rows, cols: {:4.3f} s'.format(t1-t0))
         print('Building the CSR matrix: {:4.3f} s'.format(t2-t1))
