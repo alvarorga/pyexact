@@ -2,75 +2,11 @@
 
 import time
 import numpy as np
-from numba import njit, u2, u8
+from numba import njit
 from scipy.sparse import csr_matrix
 
-
-@njit(u8(u2, u2))
-def binom(N, n):
-    """Compute the binomial coefficient of (N n).
-
-    Args:
-        N (uint16): largest number.
-        n (uint16): smallest number.
-
-    Returns:
-        bi (uint64): binomial coefficient of (N n).
-
-    """
-    n = max(n, N-n)
-    bi = 1
-    for i in range(n+1, N+1):
-        bi = i*bi
-    for i in range(1, N-n+1):
-        bi = bi//i
-    return bi
-
-
-@njit(u2(u8, u2))
-def count_bits(s, size):
-    """Count the number of '1' bits in a state s.
-
-    Args:
-        s (uint64): state given by an integer number whose binary
-            representation equals a state in the Fock space.
-        size (uint64): size of the state. Number of positions that certain
-            hold the value 1 or 0.
-
-    Returns:
-        bits (uint16): number of bits in the state.
-
-    """
-    bits = 0
-    for i in range(size):
-        bits += (s>>i)&1
-    return bits
-
-
-@njit(u8[:](u2, u2))
-def generate_states(size, N):
-    """Generate all states of a certain size with N particles.
-
-    Args:
-        size (uint16): size of the generated states.
-        N (uint16): number of particles in the states.
-
-    Returns.
-        states (uint64[:]): all states of size size and N particles.
-
-    """
-    num_states = binom(size, N)
-    states = np.zeros(num_states, dtype=np.uint64)
-
-    pos = 0
-    # Minimum state with size = size+1.
-    max_state = 1<<size
-    for s in range(max_state):
-        if count_bits(s, size) == N:
-            states[pos] = s
-            pos += 1
-
-    return states
+# from bitwise_funcs import binom
+# from bitwise_funcs import generate_states
 
 
 @njit()
@@ -175,6 +111,8 @@ def _build_sp_symmetric_mb_operator_rows_cols(L, N, J, D):
         raise ValueError('J and/or D is not symmetric.')
 
     states = generate_states(L, N)
+    print('hey')
+    print(generate_states)
     num_states = states.size
 
     number_nnz_vals = binom(L, N) + count_nnz_off_diagonal(J)*binom(L-2, N-1)
@@ -252,6 +190,7 @@ def build_sparse_mb_operator(L, N, J, D):
 
     print_time_and_sparsity_info = True
     if print_time_and_sparsity_info:
+        print('hey')
         print('Number of states: {}'.format(ns))
         print('Sparsity = {:4.3f}%'.format(100*nnz/ns**2))
         print('Building the vals, rows, cols: {:4.3f} s'.format(t1-t0))
