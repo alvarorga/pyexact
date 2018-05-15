@@ -10,58 +10,58 @@ from pyexact import dense_operators
 class ManyBodyOperatorsTestCase(unittest.TestCase):
     """Test for the functions that build many body operators."""
 
-    def setUp(self):
-        """Set up TestCase."""
-        self.L = 5
-        self.N = 3
-
     def test_values_in_density_matrix(self):
         """Test several chosen values in a density matrix."""
-        D = dense_operators.build_mb_interaction(self.L, self.N, 1, 3)
-        self.assertAlmostEqual(D[0, 0], 0)
+        D = dense_operators.build_mb_interaction(5, 3, 1, 3)
         self.assertAlmostEqual(D[1, 1], 1)
         self.assertAlmostEqual(D[3, 3], 1)
         self.assertAlmostEqual(D[8, 8], 1)
+        # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(D, ord='fro'), np.sqrt(3))
 
     def test_values_in_correlation_matrix(self):
         """Test several chosen values in a correlation matrix."""
-        C = dense_operators.build_mb_correlator(self.L, self.N, 0, 2)
+        C = dense_operators.build_mb_correlator(5, 3, 0, 2)
         self.assertAlmostEqual(C[1, 3], 1)
         self.assertAlmostEqual(C[4, 6], 1)
         self.assertAlmostEqual(C[7, 9], 1)
+        # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C, ord='fro'), np.sqrt(3))
 
     def test_values_in_number_matrix(self):
         """Test several chosen values in a number matrix."""
-        N_op = dense_operators.build_mb_correlator(self.L, self.N, 4, 4)
-        for i in range(4, 10):
-            self.assertAlmostEqual(N_op[i, i], 1)
+        N_op = dense_operators.build_mb_correlator(5, 3, 4, 4)
+        self.assertAlmostEqual(N_op[4, 4], 1)
+        self.assertAlmostEqual(N_op[5, 5], 1)
+        self.assertAlmostEqual(N_op[6, 6], 1)
+        self.assertAlmostEqual(N_op[7, 7], 1)
+        self.assertAlmostEqual(N_op[8, 8], 1)
+        self.assertAlmostEqual(N_op[9, 9], 1)
+        # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(N_op, ord='fro'), np.sqrt(6))
 
-    def test_values_in_operator_matrix(self):
-        """Test several values in a general random operator."""
-        J = 1 - 2*np.random.rand(self.L, self.L)
-        D = 1 - 2*np.random.rand(self.L, self.L)
-        Op = dense_operators.build_mb_operator(self.L, self.N, J, D)
-        # Temporary values to compare.
-        t_val_0_0 = (J[0, 0]+J[1, 1]+J[2, 2]
-                    +D[0, 1]+D[0, 2]+D[1, 2]
-                    +D[1, 0]+D[2, 0]+D[2, 1])
-        self.assertAlmostEqual(Op[0, 0], t_val_0_0)
-        t_val_3_3 = (J[1, 1]+J[2, 2]+J[3, 3]
-                     +D[1, 2]+D[1, 3]+D[2, 3]
-                     +D[2, 1]+D[3, 1]+D[3, 2])
-        self.assertAlmostEqual(Op[3, 3], t_val_3_3)
-        t_val_6_6 = (J[1, 1]+J[2, 2]+J[4, 4]
-                     +D[1, 2]+D[1, 4]+D[2, 4]
-                     +D[2, 1]+D[4, 1]+D[4, 2])
-        self.assertAlmostEqual(Op[6, 6], t_val_6_6)
-        self.assertAlmostEqual(Op[4, 7], J[1, 3])
-        self.assertAlmostEqual(Op[4, 9], 0)
-        self.assertAlmostEqual(Op[0, 9], 0)
-        self.assertAlmostEqual(Op[5, 4], J[2, 1])
-        self.assertAlmostEqual(Op[5, 7], J[2, 3])
+    def test_values_in_operator_matrix_2(self):
+        """Test several values of a general operator."""
+        J = np.reshape(np.arange(25), (5, 5))
+        D = np.reshape(25+np.arange(25), (5, 5))
+        H = dense_operators.build_mb_operator(5, 3, J, D)
+        self.assertAlmostEqual(H[0, 0], 204)
+        self.assertAlmostEqual(H[1, 1], 222)
+        self.assertAlmostEqual(H[3, 3], 258)
+        self.assertAlmostEqual(H[5, 5], 258)
+        self.assertAlmostEqual(H[9, 9], 312)
+        self.assertAlmostEqual(H[0, 1], 13)
+        self.assertAlmostEqual(H[0, 3], 3)
+        self.assertAlmostEqual(H[0, 5], 9)
+        self.assertAlmostEqual(H[0, 9], 0)
+        self.assertAlmostEqual(H[3, 5], 0)
+        self.assertAlmostEqual(H[4, 5], 7)
+        self.assertAlmostEqual(H[6, 9], 8)
+        self.assertAlmostEqual(H[7, 5], 17)
+        self.assertAlmostEqual(H[7, 6], 0)
+        self.assertAlmostEqual(H[8, 2], 0)
+        self.assertAlmostEqual(H[8, 3], 22)
+        self.assertAlmostEqual(H[9, 2], 20)
 
 
 if __name__ == '__main__':
