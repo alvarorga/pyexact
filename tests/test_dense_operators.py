@@ -1,10 +1,10 @@
-"""Tests for the exact diagonalization."""
+"""Tests for the dense_operators diagonalization."""
 
 
 import unittest
 import numpy as np
 
-from pyexact import exact
+from pyexact import dense_operators
 
 
 class ManyBodyOperatorsTestCase(unittest.TestCase):
@@ -17,7 +17,7 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
 
     def test_values_in_density_matrix(self):
         """Test several chosen values in a density matrix."""
-        D = exact.build_mb_interaction(self.L, self.N, 1, 3)
+        D = dense_operators.build_mb_interaction(self.L, self.N, 1, 3)
         self.assertAlmostEqual(D[0, 0], 0)
         self.assertAlmostEqual(D[1, 1], 1)
         self.assertAlmostEqual(D[3, 3], 1)
@@ -26,7 +26,7 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
 
     def test_values_in_correlation_matrix(self):
         """Test several chosen values in a correlation matrix."""
-        C = exact.build_mb_correlator(self.L, self.N, 0, 2)
+        C = dense_operators.build_mb_correlator(self.L, self.N, 0, 2)
         self.assertAlmostEqual(C[1, 3], 1)
         self.assertAlmostEqual(C[4, 6], 1)
         self.assertAlmostEqual(C[7, 9], 1)
@@ -34,7 +34,7 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
 
     def test_values_in_number_matrix(self):
         """Test several chosen values in a number matrix."""
-        N_op = exact.build_mb_correlator(self.L, self.N, 4, 4)
+        N_op = dense_operators.build_mb_correlator(self.L, self.N, 4, 4)
         for i in range(4, 10):
             self.assertAlmostEqual(N_op[i, i], 1)
         self.assertAlmostEqual(np.linalg.norm(N_op, ord='fro'), np.sqrt(6))
@@ -43,7 +43,7 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
         """Test several values in a general random operator."""
         J = 1 - 2*np.random.rand(self.L, self.L)
         D = 1 - 2*np.random.rand(self.L, self.L)
-        Op = exact.build_mb_operator(self.L, self.N, J, D)
+        Op = dense_operators.build_mb_operator(self.L, self.N, J, D)
         # Temporary values to compare.
         t_val_0_0 = (J[0, 0]+J[1, 1]+J[2, 2]
                     +D[0, 1]+D[0, 2]+D[1, 2]
