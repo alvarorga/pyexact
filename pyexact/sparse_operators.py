@@ -1,9 +1,7 @@
 """Exact diagonalization of sparse Hamiltonians."""
 
-import time
 import numpy as np
 from numba import njit
-from scipy.sparse import csr_matrix
 
 from pyexact.bitwise_funcs import binom
 from pyexact.bitwise_funcs import generate_states
@@ -22,7 +20,7 @@ def count_nnz_off_diagonal(A):
 
 
 @njit()
-def _build_sp_mb_operator_rows_cols(L, N, J, D):
+def build_sparse_mb_operator(L, N, J, D):
     """Compute the data/rows/cols of a mb operator in sparse CSR format.
 
     Note: if jit is not used, the loops must be done with np.arange
@@ -88,7 +86,7 @@ def _build_sp_mb_operator_rows_cols(L, N, J, D):
 
 
 @njit()
-def _build_sp_symmetric_mb_operator_rows_cols(L, N, J, D):
+def build_sparse_symmetric_mb_operator(L, N, J, D):
     """Compute the data/rows/cols of a mb symmetric operator.
 
     Note: if jit is not used, the loops must be done with np.arange
@@ -157,39 +155,3 @@ def _build_sp_symmetric_mb_operator_rows_cols(L, N, J, D):
                         c += 1
 
     return vals, rows, cols, num_states
-
-
-def build_sparse_mb_operator(L, N, J, D):
-    """Compute the sparse matrix of a many body operator.
-
-    The sparse format for the output is CSR.
-
-    Args:
-        L (int): system's length.
-        N (int): particle number.
-        J (2darray of floats): hopping matrix.
-        D (2darray of floats): interaction matrix.
-
-    Returns:
-        H (CSR sparse array of floats): sparse Hamiltonian matrix.
-
-    """
-    # Check if J and D are symmetric.
-    t0 = time.time()
-    if np.allclose(J, J.T) and np.allclose(D, D.T):
-        vals, rows, cols, ns = _build_sp_symmetric_mb_operator_rows_cols(L, N,
-                                                                         J, D)
-    else:
-        vals, rows, cols, ns = _build_sp_mb_operator_rows_cols(L, N, J, D)
-    nnz = np.count_nonzero(vals)
-    t1 = time.time()
-    H = csr_matrix((vals, (rows, cols)), shape=(ns, ns))
-    t2 = time.time()
-
-    print_time_and_sparsity_info = True
-    if print_time_and_sparsity_info:
-        print('Number of states: {}'.format(ns))
-        print('Sparsity = {:4.3f}%'.format(100*nnz/ns**2))
-        print('Building the vals, rows, cols: {:4.3f} s'.format(t1-t0))
-        print('Building the CSR matrix: {:4.3f} s'.format(t2-t1))
-    return H

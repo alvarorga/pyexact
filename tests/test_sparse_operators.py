@@ -2,6 +2,7 @@
 
 import unittest
 import numpy as np
+from scipy.sparse import csr_matrix
 
 from pyexact import dense_operators
 from pyexact import sparse_operators
@@ -17,8 +18,8 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         J = np.random.rand(L, L)
         D = np.random.rand(L, L)
         dense = dense_operators.build_mb_operator(L, N, J, D)
-        H = sparse_operators.build_sparse_mb_operator(L, N, J, D)
-        H = H.toarray()
+        v, r, c, ns = sparse_operators.build_sparse_mb_operator(L, N, J, D)
+        H = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertTrue(np.allclose(dense, H))
 
     def test_symmetric_sparse_coincides_with_dense(self):
@@ -30,8 +31,8 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         D = np.random.rand(L, L)
         D = (D + D.T)/2
         dense = dense_operators.build_mb_operator(L, N, J, D)
-        H = sparse_operators.build_sparse_mb_operator(L, N, J, D)
-        H = H.toarray()
+        v, r, c, ns = sparse_operators.build_sparse_mb_operator(L, N, J, D)
+        H = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertTrue(np.allclose(dense, H))
 
     def test_values_in_operator_matrix(self):
