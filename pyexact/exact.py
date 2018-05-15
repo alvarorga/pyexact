@@ -1,23 +1,23 @@
 """Scripts for computing exact diagonalizations."""
 
 import numpy as np
-from numba import njit, u2, f8
+from numba import njit
 
 from pyexact.bitwise_funcs import generate_states
 
 
-@njit(f8[:, :](u2, u2, f8[:, :], f8[:, :]))
+@njit()
 def build_mb_operator(L, N, J, D):
     """Build a many-body operator with 2-particle terms.
 
     Args:
-        L (uint16): system's length.
-        N (uint16): particle number.
-        J (float64[:, :]): hopping matrix.
-        D (float64[:, :]): interaction matrix.
+        L (int): system's length.
+        N (int): particle number.
+        J (2darray of floats): hopping matrix.
+        D (2darray of floats): interaction matrix.
 
     Returns:
-        H (float64[:, :]]): many-body operator.
+        H (2darray of floats): many-body operator.
 
     """
     states = generate_states(L, N)
@@ -50,24 +50,24 @@ def build_mb_operator(L, N, J, D):
     return H
 
 
-@njit(f8[:, :](u2, u2, u2, u2))
+@njit()
 def build_mb_correlator(L, N, i, j):
-    r"""Build a many-body correlation operator a^\dagger_i a_j.
+    """Build a many-body correlation operator b^dagger_i a_j.
 
     Args:
-        L (uint16): system's length.
-        N (uint16): particle number.
-        i (uint16): position of the creation operator.
-        j (uint16): position of the annihilation operator.
+        L (int): system's length.
+        N (int): particle number.
+        i (int): position of the creation operator.
+        j (int): position of the annihilation operator.
 
     Returns:
-        C (float64[:, :]]): many-body corelation operator.
+        C (2darray of floats): many-body corelation operator.
 
     """
     states = generate_states(L, N)
     num_states = states.size
 
-    C = np.zeros((num_states, num_states))
+    C = np.zeros((num_states, num_states), np.float64)
 
     # Notation:
     #     s: initial state.
@@ -78,7 +78,7 @@ def build_mb_correlator(L, N, i, j):
             if (s>>i)&1:
                 C[ix_s, ix_s] += 1
 
-    else:  # not i == j.
+    else:
         for (ix_s, s) in enumerate(states):
             if (not (s>>i)&1) and ((s>>j)&1):
                 t = s + (1<<i) - (1<<j)
@@ -88,34 +88,34 @@ def build_mb_correlator(L, N, i, j):
     return C
 
 
-@njit(f8[:, :](u2, u2, u2, u2))
-def build_mb_density(L, N, i, j):
+@njit()
+def build_mb_interaction(L, N, i, j):
     """Build the many-body operator n_i n_j.
 
     Args:
-        L (uint16): system's length.
-        N (uint16): particle number.
-        i (uint16): position of the first number operator.
-        j (uint16): position of the second number operator.
+        L (int): system's length.
+        N (int): particle number.
+        i (int): position of the first number operator.
+        j (int): position of the second number operator.
 
     Returns:
-        D (float64[:, :]]): many-body density operator.
+        D (2darray of floats): many-body density operator.
 
     """
-    if not i == j:
-        states = generate_states(L, N)
-        num_states = states.size
+    if i == j:
+        raise ValueError('i and j must be different.')
 
-        D = np.zeros((num_states, num_states))
+    states = generate_states(L, N)
+    num_states = states.size
 
-        # Notation:
-        #     s: initial state.
-        #     ix_s: index of s.
-        for (ix_s, s) in enumerate(states):
-            # Interaction terms: n_i n_j.
-            if (s>>i)&1 and (s>>j)&1:
-                D[ix_s, ix_s] += 1
-    else:  # i == j.
-        D = build_mb_correlator(L, N, i, i)
+    D = np.zeros((num_states, num_states), np.float64)
+
+    # Notation:
+    #     s: initial state.
+    #     ix_s: index of s.
+    for (ix_s, s) in enumerate(states):
+        # Interaction terms: n_i n_j.
+        if (s>>i)&1 and (s>>j)&1:
+            D[ix_s, ix_s] += 1
 
     return D

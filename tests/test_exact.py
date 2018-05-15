@@ -17,7 +17,7 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
 
     def test_values_in_density_matrix(self):
         """Test several chosen values in a density matrix."""
-        D = exact.build_mb_density(self.L, self.N, 1, 3)
+        D = exact.build_mb_interaction(self.L, self.N, 1, 3)
         self.assertAlmostEqual(D[0, 0], 0)
         self.assertAlmostEqual(D[1, 1], 1)
         self.assertAlmostEqual(D[3, 3], 1)
@@ -36,12 +36,6 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
         """Test several chosen values in a number matrix."""
         N_op = exact.build_mb_correlator(self.L, self.N, 4, 4)
         for i in range(4, 10):
-            self.assertAlmostEqual(N_op[i, i], 1)
-        self.assertAlmostEqual(np.linalg.norm(N_op, ord='fro'), np.sqrt(6))
-
-        # Repeat test building N_op as a density operator.
-        N_op = exact.build_mb_density(self.L, self.N, 3, 3)
-        for i in [1, 2, 3, 7, 8, 9]:
             self.assertAlmostEqual(N_op[i, i], 1)
         self.assertAlmostEqual(np.linalg.norm(N_op, ord='fro'), np.sqrt(6))
 

@@ -54,7 +54,8 @@ def generate_states(size, N):
         N (int): number of particles in the states.
 
     Returns:
-        states (1darray of ints): all states of size size and N particles.
+        states (1darray of uints): all states of size size and N
+            particles.
 
     """
     num_states = binom(size, N)
