@@ -27,12 +27,6 @@ def build_mb_hamiltonian(J, D, L, N=None, R=R, L=L):
     is_H_sparse = True if L > 14 else False
     is_J_symmetric = True if np.allclose(J, J.T) else False
 
-    # Make D upper triangular.
-    for j in range(L):
-        for i in range(j):  # i < j.
-            D[i, j] += D[j, i]
-            D[j, i] = 0
-
     if is_N_conserved:
         if is_H_sparse:
             # v, r, c, ns stand for values, rows, cols, and number of
