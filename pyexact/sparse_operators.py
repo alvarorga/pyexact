@@ -42,9 +42,10 @@ def build_sparse_mb_operator(L, N, J, D):
     states = generate_states(L, N)
     num_states = states.size
 
-    vals = np.zeros(num_states*(N*(L-N) + 2), dtype=np.float64)
-    rows = np.zeros(num_states*(N*(L-N) + 2), dtype=np.int32)
-    cols = np.zeros(num_states*(N*(L-N) + 2), dtype=np.int32)
+    number_nnz_vals = binom(L, N) + count_nnz_off_diagonal(J)*binom(L-2, N-1)
+    vals = np.zeros(number_nnz_vals, dtype=np.float64)
+    rows = np.zeros(number_nnz_vals, dtype=np.int32)
+    cols = np.zeros(number_nnz_vals, dtype=np.int32)
 
     # Notation:
     #     s: initial state.
@@ -56,11 +57,18 @@ def build_sparse_mb_operator(L, N, J, D):
         for i in range(L):
             if ((s>>i)&np.uint16(1)):
                 vals[c] += J[i, i]
+
+        # Interaction terms: n_i*n_j.
+        for i in range(L):
+            for j in range(L):
+                if (np.abs(D[i, j]) > 1e-6) and (i != j):
+                    if ((s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
+                        vals[c] += D[i, j]
         cols[c] = ix_s
         rows[c] = ix_s
         c += 1
 
-        # Hopping terms: b^dagger_i b_j.
+        # Hopping terms: b^dagger_i*b_j.
         for i in range(L):
             for j in range(L):
                 if (np.abs(J[i, j]) > 1e-6) and (j != i):
@@ -71,16 +79,6 @@ def build_sparse_mb_operator(L, N, J, D):
                         rows[c] = ix_t
                         cols[c] = ix_s
                         c += 1
-
-        # Interaction terms: n_i n_j.
-        for i in range(L):
-            for j in range(L):
-                if (np.abs(D[i, j]) > 1e-6) and (i != j):
-                    if ((s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
-                        vals[c] += D[i, j]
-                        rows[c] = ix_s
-                        cols[c] = ix_s
-        c += 1
 
     return vals, rows, cols, num_states
 
