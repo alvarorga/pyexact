@@ -44,7 +44,7 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
         """Test several values of a general operator."""
         J = np.reshape(np.arange(25), (5, 5))
         D = np.reshape(25+np.arange(25), (5, 5))
-        H = dense_operators.build_mb_operator(5, 3, J, D)
+        H = dense_operators.de_op(5, 3, J, D)
         self.assertAlmostEqual(H[0, 0], 204)
         self.assertAlmostEqual(H[1, 1], 222)
         self.assertAlmostEqual(H[3, 3], 258)
