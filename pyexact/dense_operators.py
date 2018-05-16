@@ -7,7 +7,11 @@ from pyexact.bitwise_funcs import generate_states
 
 
 @njit()
+<<<<<<< HEAD
 def de_pc_op(L, N, J, D):
+=======
+def de_op(L, N, J, D):
+>>>>>>> 22fb2923a16b3d326349a57a08e0d48a9d2028b4
     """Build a many-body operator with 2-particle terms.
 
     Args:
