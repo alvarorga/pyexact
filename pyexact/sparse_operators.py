@@ -20,11 +20,7 @@ def count_nnz_off_diagonal(A):
 
 
 @njit()
-<<<<<<< HEAD
 def sp_pc_op(L, N, J, D):
-=======
-def sp_op(L, N, J, D):
->>>>>>> 22fb2923a16b3d326349a57a08e0d48a9d2028b4
     """Compute the data/rows/cols of a mb operator in sparse CSR format.
 
     Note: if jit is not used, the loops must be done with np.arange
