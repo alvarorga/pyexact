@@ -40,11 +40,11 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(N_op, ord='fro'), np.sqrt(6))
 
-    def test_values_in_operator_matrix_2(self):
+    def test_values_in_operator_matrix(self):
         """Test several values of a general operator."""
         J = np.reshape(np.arange(25), (5, 5))
         D = np.reshape(25+np.arange(25), (5, 5))
-        H = dense_operators.de_op(5, 3, J, D)
+        H = dense_operators.de_pc_op(5, 3, J, D)
         self.assertAlmostEqual(H[0, 0], 204)
         self.assertAlmostEqual(H[1, 1], 222)
         self.assertAlmostEqual(H[3, 3], 258)
