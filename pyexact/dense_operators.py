@@ -51,6 +51,58 @@ def de_pc_op(L, N, J, D):
 
 
 @njit()
+def de_npc_op(L, J, D, r, l):
+    """Build a dense number nonconserving operator.
+
+    Args:
+        L (int): system's length.
+        J (2darray of floats): hopping matrix.
+        D (2darray of floats): interaction matrix.
+        r (1darray of floats): raising operator: b^dagger_i.
+        l (1darray of floats): lowering operator: b_i.
+
+    Returns:
+        H (2darray of floats): many-body operator.
+
+    """
+    num_states = 1<<L
+
+    H = np.zeros((num_states, num_states), np.float64)
+
+    # Notation:
+    #     s: initial state.
+    #     t: final state.
+    for s in range(1<<L):
+        for i in range(L):
+            # On-site terms: n_i.
+            if (s>>i)&1:
+                H[s, s] += J[i, i]
+
+            for j in range(L):
+                if i != j:
+                    # Hopping terms: b^dagger_i*b_j.
+                    if not (s>>i)&1 and (s>>j)&1:
+                        t = s + (1<<i) - (1<<j)
+                        H[t, s] += J[i, j]
+
+                    # Interaction terms: n_i*n_j.
+                    if (s>>i)&1 and (s>>j)&1:
+                        H[s, s] += D[i, j]
+
+            # Raising operator: b^dagger_i.
+            if not (s>>i)&1:
+                t = s + (1<<i)
+                H[t, s] += r[i]
+
+            # Lowering operator: b_i.
+            if (s>>i)&1:
+                t = s - (1<<i)
+                H[t, s] += l[i]
+
+    return H
+
+
+@njit()
 def build_mb_correlator(L, N, i, j):
     """Build a many-body correlation operator b^dagger_i a_j.
 
