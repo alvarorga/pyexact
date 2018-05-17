@@ -70,6 +70,13 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         D = np.reshape(25+np.arange(16), (4, 4))
         r = np.arange(1, 5)
         l = np.arange(5, 9)
+<<<<<<< HEAD
+=======
+        print(f'J =\n{J}')
+        print(f'D =\n{D}')
+        print(f'r =\n{r}')
+        print(f'l =\n{l}')
+>>>>>>> 9ba35215d6879f010f60b262ddd9ac5098a758a7
         v, r, c, ns = sparse_operators.sp_npc_op(4, J, D, r, l)
         H = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(H[0, 0], 0)
