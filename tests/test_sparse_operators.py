@@ -1,9 +1,11 @@
 """Test exact diagonalization of sparse matrices."""
 
+import sys
 import unittest
 import numpy as np
 from scipy.sparse import csr_matrix
 
+sys.path.append('../')
 from pyexact import sparse_operators
 
 

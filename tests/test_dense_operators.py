@@ -1,9 +1,11 @@
 """Tests for the dense_operators diagonalization."""
 
 
+import sys
 import unittest
 import numpy as np
 
+sys.path.append('../')
 from pyexact import dense_operators
 
 
