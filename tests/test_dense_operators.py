@@ -12,12 +12,26 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
 
     def test_values_in_density_matrix(self):
         """Test several chosen values in a density matrix."""
-        D = dense_operators.build_mb_interaction(5, 3, 1, 3)
-        self.assertAlmostEqual(D[1, 1], 1)
-        self.assertAlmostEqual(D[3, 3], 1)
-        self.assertAlmostEqual(D[8, 8], 1)
+        D = dense_operators.build_mb_interaction(5, 3, 0, 4)
+        self.assertAlmostEqual(D[4], 1)
+        self.assertAlmostEqual(D[5], 1)
+        self.assertAlmostEqual(D[7], 1)
         # Make sure that the other elts are 0.
-        self.assertAlmostEqual(np.linalg.norm(D, ord='fro'), np.sqrt(3))
+        self.assertAlmostEqual(np.linalg.norm(D), np.sqrt(3))
+
+        D = dense_operators.build_mb_interaction(5, 3, 1, 3)
+        self.assertAlmostEqual(D[1], 1)
+        self.assertAlmostEqual(D[3], 1)
+        self.assertAlmostEqual(D[8], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(D), np.sqrt(3))
+
+        D = dense_operators.build_mb_interaction(5, 3, 4, 2)
+        self.assertAlmostEqual(D[5], 1)
+        self.assertAlmostEqual(D[6], 1)
+        self.assertAlmostEqual(D[9], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(D), np.sqrt(3))
 
     def test_values_in_correlation_matrix(self):
         """Test several chosen values in a correlation matrix."""
@@ -26,19 +40,43 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
         self.assertAlmostEqual(C[4, 6], 1)
         self.assertAlmostEqual(C[7, 9], 1)
         # Make sure that the other elts are 0.
-        self.assertAlmostEqual(np.linalg.norm(C, ord='fro'), np.sqrt(3))
+        self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
+
+        C = dense_operators.build_mb_correlator(5, 3, 1, 2)
+        self.assertAlmostEqual(C[1, 2], 1)
+        self.assertAlmostEqual(C[4, 5], 1)
+        self.assertAlmostEqual(C[8, 9], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
+
+        C = dense_operators.build_mb_correlator(5, 3, 4, 3)
+        self.assertAlmostEqual(C[4, 1], 1)
+        self.assertAlmostEqual(C[5, 2], 1)
+        self.assertAlmostEqual(C[6, 3], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
 
     def test_values_in_number_matrix(self):
         """Test several chosen values in a number matrix."""
-        N_op = dense_operators.build_mb_correlator(5, 3, 4, 4)
-        self.assertAlmostEqual(N_op[4, 4], 1)
-        self.assertAlmostEqual(N_op[5, 5], 1)
-        self.assertAlmostEqual(N_op[6, 6], 1)
-        self.assertAlmostEqual(N_op[7, 7], 1)
-        self.assertAlmostEqual(N_op[8, 8], 1)
-        self.assertAlmostEqual(N_op[9, 9], 1)
+        N_op = dense_operators.build_mb_number_op(5, 3, 1)
+        self.assertAlmostEqual(N_op[0], 1)
+        self.assertAlmostEqual(N_op[1], 1)
+        self.assertAlmostEqual(N_op[3], 1)
+        self.assertAlmostEqual(N_op[4], 1)
+        self.assertAlmostEqual(N_op[6], 1)
+        self.assertAlmostEqual(N_op[8], 1)
         # Make sure that the other elts are 0.
-        self.assertAlmostEqual(np.linalg.norm(N_op, ord='fro'), np.sqrt(6))
+        self.assertAlmostEqual(np.linalg.norm(N_op), np.sqrt(6))
+
+        N_op = dense_operators.build_mb_number_op(5, 3, 4)
+        self.assertAlmostEqual(N_op[4], 1)
+        self.assertAlmostEqual(N_op[5], 1)
+        self.assertAlmostEqual(N_op[6], 1)
+        self.assertAlmostEqual(N_op[7], 1)
+        self.assertAlmostEqual(N_op[8], 1)
+        self.assertAlmostEqual(N_op[9], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(N_op), np.sqrt(6))
 
     def test_values_in_operator_matrix(self):
         """Test several values of a general operator."""

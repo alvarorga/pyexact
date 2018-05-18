@@ -103,8 +103,33 @@ def de_npc_op(L, J, D, r, l):
 
 
 @njit()
+def build_mb_number_op(L, N, i):
+    """Build a many-body number operator n_i.
+
+    Args:
+        L (int): system's length.
+        N (int): particle number.
+        i (int): position of the number operator.
+
+    Returns:
+        C (1darray of floats): many-body corelation operator.
+
+    """
+    states = generate_states(L, N)
+    num_states = states.size
+
+    C = np.zeros(num_states, np.float64)
+
+    for ix_s, s in enumerate(states):
+        if (s>>i)&1:
+            C[ix_s] += 1
+
+    return C
+
+
+@njit()
 def build_mb_correlator(L, N, i, j):
-    """Build a many-body correlation operator b^dagger_i a_j.
+    """Build a many-body correlation operator b^dagger_i b_j, i != j.
 
     Args:
         L (int): system's length.
@@ -116,26 +141,19 @@ def build_mb_correlator(L, N, i, j):
         C (2darray of floats): many-body corelation operator.
 
     """
+    if i == j:
+        raise ValueError('i and j must be different.')
+
     states = generate_states(L, N)
     num_states = states.size
 
     C = np.zeros((num_states, num_states), np.float64)
 
-    # Notation:
-    #     s: initial state.
-    #     t: final state.
-    #     ix_#: index of #.
-    if i == j:  # Number operator.
-        for (ix_s, s) in enumerate(states):
-            if (s>>i)&1:
-                C[ix_s, ix_s] += 1
-
-    else:
-        for (ix_s, s) in enumerate(states):
-            if (not (s>>i)&1) and ((s>>j)&1):
-                t = s + (1<<i) - (1<<j)
-                ix_t = np.where(states==t)[0][0]
-                C[ix_t, ix_s] += 1
+    for ix_s, s in enumerate(states):
+        if (not (s>>i)&1) and ((s>>j)&1):
+            t = s + (1<<i) - (1<<j)
+            ix_t = np.where(states==t)[0][0]
+            C[ix_t, ix_s] += 1
 
     return C
 
@@ -151,7 +169,7 @@ def build_mb_interaction(L, N, i, j):
         j (int): position of the second number operator.
 
     Returns:
-        D (2darray of floats): many-body density operator.
+        D (1darray of floats): many-body density operator.
 
     """
     if i == j:
@@ -160,14 +178,10 @@ def build_mb_interaction(L, N, i, j):
     states = generate_states(L, N)
     num_states = states.size
 
-    D = np.zeros((num_states, num_states), np.float64)
+    D = np.zeros(num_states, np.float64)
 
-    # Notation:
-    #     s: initial state.
-    #     ix_s: index of s.
-    for (ix_s, s) in enumerate(states):
-        # Interaction terms: n_i n_j.
+    for ix_s, s in enumerate(states):
         if (s>>i)&1 and (s>>j)&1:
-            D[ix_s, ix_s] += 1
+            D[ix_s] += 1
 
     return D
