@@ -1,4 +1,4 @@
-"""Tests of the bitwise functions."""
+"""Test bitwise functions."""
 
 
 import sys
