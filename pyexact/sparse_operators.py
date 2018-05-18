@@ -263,6 +263,9 @@ def build_mb_sparse_correlator(L, N, i, j):
         num_states (int): number of states.
 
     """
+    if i == j:
+        raise ValueError('i and j must be different.')
+
     states = generate_states(L, N)
     num_states = states.size
 
@@ -271,37 +274,14 @@ def build_mb_sparse_correlator(L, N, i, j):
     rows = np.zeros(number_nnz_vals, dtype=np.int32)
     cols = np.zeros(number_nnz_vals, dtype=np.int32)
 
-    # Notation:
-    #     s: initial state.
-    #     t: final state.
-    #     ix_#: index of #.
     c = 0
     for ix_s, s in enumerate(states):
-        # On-site terms: n_i.
-        for i in range(L):
-            if ((s>>i)&np.uint16(1)):
-                vals[c] += J[i, i]
-
-        # Interaction terms: n_i*n_j.
-        for i in range(L):
-            for j in range(L):
-                if (np.abs(D[i, j]) > 1e-6) and (i != j):
-                    if ((s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
-                        vals[c] += D[i, j]
-        cols[c] = ix_s
-        rows[c] = ix_s
-        c += 1
-
-        # Hopping terms: b^dagger_i*b_j.
-        for i in range(L):
-            for j in range(L):
-                if (np.abs(J[i, j]) > 1e-6) and (j != i):
-                    if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
-                        t = s + (1<<i) - (1<<j)
-                        ix_t = np.where(states == t)[0][0]
-                        vals[c] = J[i, j]
-                        rows[c] = ix_t
-                        cols[c] = ix_s
-                        c += 1
+        if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
+            t = s + (1<<i) - (1<<j)
+            ix_t = np.where(states == t)[0][0]
+            vals[c] += 1
+            rows[c] = ix_t
+            cols[c] = ix_s
+            c += 1
 
     return vals, rows, cols, num_states
