@@ -129,11 +129,7 @@ def build_mb_number_op(L, N, i):
 
 @njit()
 def build_mb_correlator(L, N, i, j):
-<<<<<<< HEAD
-    """Build a many-body correlation operator b^dagger_i b_j, i != j.
-=======
-    """Build a many-body correlation operator b^dagger_i a_j, i != j.
->>>>>>> d2347b3c391695ca35e1eb7b2aefc196032f3497
+    """Build a many-body correlation operator b^dagger_i*b_j, i != j.
 
     Args:
         L (int): system's length.
