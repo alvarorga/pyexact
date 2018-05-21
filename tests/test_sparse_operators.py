@@ -97,7 +97,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
 
     def test_values_in_correlation_matrix(self):
         """Test several operators of the form b^dagger_i*b_j."""
-        v, r, c, ns = sparse_operators.build_mb_sparse_correlator(5, 3, 0, 2)
+        v, r, c, ns = sparse_operators.sp_pc_correlator(5, 3, 0, 2)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[1, 3], 1)
         self.assertAlmostEqual(C[4, 6], 1)
@@ -105,7 +105,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
 
-        v, r, c, ns = sparse_operators.build_mb_sparse_correlator(5, 3, 1, 2)
+        v, r, c, ns = sparse_operators.sp_pc_correlator(5, 3, 1, 2)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[1, 2], 1)
         self.assertAlmostEqual(C[4, 5], 1)
@@ -113,7 +113,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
 
-        v, r, c, ns = sparse_operators.build_mb_sparse_correlator(5, 3, 4, 3)
+        v, r, c, ns = sparse_operators.sp_pc_correlator(5, 3, 4, 3)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[4, 1], 1)
         self.assertAlmostEqual(C[5, 2], 1)

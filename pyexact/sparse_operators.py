@@ -248,7 +248,7 @@ def sp_npc_op(L, J, D, r, l):
     return vals, rows, cols, num_states
 
 
-def build_mb_sparse_correlator(L, N, i, j):
+def sp_pc_correlator(L, N, i, j):
     """Build a many-body correlation operator b^dagger_i*b_j, i != j.
 
     Args:

@@ -3,10 +3,10 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from pyexact.dense_operators import build_mb_number_op
-from pyexact.dense_operators import build_mb_correlator
-from pyexact.dense_operators import build_mb_interaction
-from pyexact.sparse_operators import build_mb_sparse_correlator
+from pyexact.dense_operators import (
+    de_pc_number_op, de_pc_correlator, de_pc_interaction
+    )
+from pyexact.sparse_operators import sp_pc_correlator
 
 
 def compute_P(state, L, N=None, force_sparse=False):
@@ -36,18 +36,18 @@ def compute_P(state, L, N=None, force_sparse=False):
     if is_N_conserved:
         # Number operator.
         for i in range(L):
-            ni = build_mb_number_op(L, N, i)
+            ni = de_pc_number_op(L, N, i)
             P[i, i] = np.dot(ni, state**2)
 
         # Correlation terms.
         for i in range(L):
             for j in range(i):  # j < i.
                 if is_sparse:
-                    v, r, c, ns = build_mb_sparse_correlator(L, N, i, j)
+                    v, r, c, ns = sp_pc_correlator(L, N, i, j)
                     bibj = csr_matrix((v, (r, c)), shape=(ns, ns))
                     P[i, j] = np.dot(state, bibj.dot(state))
                 else:
-                    bibj = build_mb_correlator(L, N, i, j)
+                    bibj = de_pc_correlator(L, N, i, j)
                     P[i, j] = np.dot(state, np.dot(bibj, state))
                 P[j, i] = P[i, j]
     else:
@@ -79,7 +79,7 @@ def compute_D(state, L, N=None):
     if is_N_conserved:
         for i in range(L):
             for j in range(i):  # j < i.
-                ninj = build_mb_interaction(L, N, i, j)
+                ninj = de_pc_interaction(L, N, i, j)
                 D[i, j] = np.dot(ninj, state**2)
                 D[j, i] = D[i, j]
     else:

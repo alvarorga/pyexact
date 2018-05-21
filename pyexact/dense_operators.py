@@ -103,7 +103,7 @@ def de_npc_op(L, J, D, r, l):
 
 
 @njit()
-def build_mb_number_op(L, N, i):
+def de_pc_number_op(L, N, i):
     """Build a many-body number operator n_i.
 
     Args:
@@ -128,7 +128,7 @@ def build_mb_number_op(L, N, i):
 
 
 @njit()
-def build_mb_correlator(L, N, i, j):
+def de_pc_correlator(L, N, i, j):
     """Build a many-body correlation operator b^dagger_i*b_j, i != j.
 
     Args:
@@ -159,7 +159,7 @@ def build_mb_correlator(L, N, i, j):
 
 
 @njit()
-def build_mb_interaction(L, N, i, j):
+def de_pc_interaction(L, N, i, j):
     """Build the many-body operator n_i n_j.
 
     Args:
