@@ -4,9 +4,10 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 from pyexact.dense_operators import (
-    de_pc_number_op, de_pc_correlator, de_pc_interaction
+    de_pc_number_op, de_pc_correlator, de_pc_interaction,
+    de_npc_number_op, de_npc_correlator, de_npc_interaction
     )
-from pyexact.sparse_operators import sp_pc_correlator
+from pyexact.sparse_operators import sp_pc_correlator, sp_npc_correlator
 
 
 def compute_P(state, L, N=None, force_sparse=False):
@@ -51,7 +52,22 @@ def compute_P(state, L, N=None, force_sparse=False):
                     P[i, j] = np.dot(state, np.dot(bibj, state))
                 P[j, i] = P[i, j]
     else:
-        raise NotImplementedError('Nonconserved N is not implemented yet.')
+        # Number operator.
+        for i in range(L):
+            ni = de_npc_number_op(L, i)
+            P[i, i] = np.dot(ni, state**2)
+
+        # Correlation terms.
+        for i in range(L):
+            for j in range(i):  # j < i.
+                if is_sparse:
+                    v, r, c, ns = sp_npc_correlator(L, i, j)
+                    bibj = csr_matrix((v, (r, c)), shape=(ns, ns))
+                    P[i, j] = np.dot(state, bibj.dot(state))
+                else:
+                    bibj = de_npc_correlator(L, i, j)
+                    P[i, j] = np.dot(state, np.dot(bibj, state))
+                P[j, i] = P[i, j]
 
     return P
 
@@ -65,7 +81,7 @@ def compute_D(state, L, N=None):
     Args:
         state (1darray of floats): vector representation of the state.
         L (int): system's length.
-        N (int, opt): number of particles in the system. If None, the
+        N (int, opt): number of particles in the system. If None,
             particle number is not conserved.
 
     Returns:
@@ -83,6 +99,10 @@ def compute_D(state, L, N=None):
                 D[i, j] = np.dot(ninj, state**2)
                 D[j, i] = D[i, j]
     else:
-        raise NotImplementedError('Nonconserved N is not implemented yet.')
+        for i in range(L):
+            for j in range(i):  # j < i.
+                ninj = de_npc_interaction(L, i, j)
+                D[i, j] = np.dot(ninj, state**2)
+                D[j, i] = D[i, j]
 
     return D
