@@ -172,7 +172,7 @@ def sp_npc_op(L, J, D, r, l):
 
     """
     num_states = 1<<L
-    number_nnz_vals = (num_states*10
+    number_nnz_vals = (num_states
                        + count_nnz_off_diagonal(J)*(1<<(L-2))
                        + r.size*(1<<(L-1))
                        + l.size*(1<<(L-1)))
@@ -282,6 +282,43 @@ def sp_pc_correlator(L, N, i, j):
             vals[c] += 1
             rows[c] = ix_t
             cols[c] = ix_s
+            c += 1
+
+    return vals, rows, cols, num_states
+
+
+@njit()
+def sp_npc_correlator(L, i, j):
+    """Compute sparse matrix of number nonconserving correlator.
+
+    Args:
+        L (int): system's length.
+        J (2darray of floats): hopping matrix. Must be symmetric.
+        D (2darray of floats): interaction matrix. Must be symmetric.
+        r (1darray of floats): raise matrix. Operator: b^dagger_i.
+        l (1darray of floats): lower matrix. Operator: b_i.
+
+    Returns:
+        vals, rows, cols: arrays to build the sparse Hamiltonian in
+            CSR format.
+
+    """
+    if i == j:
+        raise ValueError('i and j must be different.')
+
+    num_states = 1<<L
+    number_nnz_vals = 1<<(L-2)
+    vals = np.zeros(number_nnz_vals, dtype=np.float64)
+    rows = np.zeros(number_nnz_vals, dtype=np.int32)
+    cols = np.zeros(number_nnz_vals, dtype=np.int32)
+
+    c = 0
+    for s in range(num_states):
+        if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
+            t = s + (1<<i) - (1<<j)
+            vals[c] += 1
+            rows[c] = t
+            cols[c] = s
             c += 1
 
     return vals, rows, cols, num_states

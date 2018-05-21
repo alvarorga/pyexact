@@ -95,8 +95,8 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         self.assertAlmostEqual(H[10, 2], 4)
         self.assertAlmostEqual(H[15, 13], 2)
 
-    def test_values_in_correlation_matrix(self):
-        """Test several operators of the form b^dagger_i*b_j."""
+    def test_values_in_number_conserving_correlation_matrix(self):
+        """Test the number conserving operators b^dagger_i*b_j."""
         v, r, c, ns = sparse_operators.sp_pc_correlator(5, 3, 0, 2)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[1, 3], 1)
@@ -120,6 +120,36 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         self.assertAlmostEqual(C[6, 3], 1)
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
+
+    def test_values_in_number_nonconserving_correlation_matrix(self):
+        """Test the number nonconserving operators b^dagger_i*b_j."""
+        v, r, c, ns = sparse_operators.sp_npc_correlator(4, 0, 2)
+        C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
+        self.assertAlmostEqual(C[1, 4], 1)
+        self.assertAlmostEqual(C[3, 6], 1)
+        self.assertAlmostEqual(C[9, 12], 1)
+        self.assertAlmostEqual(C[11, 14], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), 2)
+
+        v, r, c, ns = sparse_operators.sp_npc_correlator(4, 1, 2)
+        C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
+        self.assertAlmostEqual(C[2, 4], 1)
+        self.assertAlmostEqual(C[3, 5], 1)
+        self.assertAlmostEqual(C[10, 12], 1)
+        self.assertAlmostEqual(C[11, 13], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), 2)
+
+        v, r, c, ns = sparse_operators.sp_npc_correlator(4, 3, 2)
+        C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
+        self.assertAlmostEqual(C[8, 4], 1)
+        self.assertAlmostEqual(C[9, 5], 1)
+        self.assertAlmostEqual(C[10, 6], 1)
+        self.assertAlmostEqual(C[11, 7], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), 2)
+
 
 if __name__ == '__main__':
     unittest.main()
