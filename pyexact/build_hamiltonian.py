@@ -3,11 +3,8 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from pyexact.dense_operators import de_pc_op
-from pyexact.dense_operators import de_npc_op
-from pyexact.sparse_operators import sp_pc_op
-from pyexact.sparse_operators import sp_sym_pc_op
-from pyexact.sparse_operators import sp_npc_op
+from pyexact.dense_operators import de_pc_op, de_sym_pc_op, de_npc_op
+from pyexact.sparse_operators import sp_pc_op, sp_sym_pc_op, sp_npc_op
 
 def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
     """Build a full many body Hamiltonian.
@@ -33,15 +30,16 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
 
     if is_N_conserved:
         if is_H_sparse:
-            # v, r, c, ns stand for values, rows, cols, and number of
-            # many body states.
             if is_J_symmetric:
                 v, r, c, ns = sp_sym_pc_op(L, N, J, D)
             else:
                 v, r, c, ns = sp_pc_op(L, N, J, D)
             H = csr_matrix((v, (r, c)), shape=(ns, ns))
         else:
-            H = de_pc_op(L, N, J, D)
+            if is_J_symmetric:
+                H = de_sym_pc_op(L, N, J, D)
+            else:
+                H = de_pc_op(L, N, J, D)
     else:
         if is_H_sparse:
             v, r, c, ns = sp_npc_op(L, J, D, r, l)
