@@ -64,8 +64,8 @@ def sp_pc_op(L, N, J, D):
                 if (np.abs(D[i, j]) > 1e-6) and (i != j):
                     if ((s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         vals[c] += D[i, j]
-        cols[c] = ix_s
-        rows[c] = ix_s
+        cols[c] += ix_s
+        rows[c] += ix_s
         c += 1
 
         # Hopping terms: b^dagger_i*b_j.
@@ -75,9 +75,9 @@ def sp_pc_op(L, N, J, D):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
                         ix_t = np.where(states == t)[0][0]
-                        vals[c] = J[i, j]
-                        rows[c] = ix_t
-                        cols[c] = ix_s
+                        vals[c] += J[i, j]
+                        rows[c] += ix_t
+                        cols[c] += ix_s
                         c += 1
 
     return vals, rows, cols, num_states
@@ -132,8 +132,8 @@ def sp_sym_pc_op(L, N, J, D):
                     if ((s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         vals[c] += 2*D[i, j]
 
-        cols[c] = ix_s
-        rows[c] = ix_s
+        cols[c] += ix_s
+        rows[c] += ix_s
         c += 1
 
         # Hopping terms: b^dagger_i*b_j.
@@ -143,13 +143,13 @@ def sp_sym_pc_op(L, N, J, D):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
                         ix_t = np.where(states == t)[0][0]
-                        vals[c] = J[i, j]
-                        rows[c] = ix_t
-                        cols[c] = ix_s
+                        vals[c] += J[i, j]
+                        rows[c] += ix_t
+                        cols[c] += ix_s
                         c += 1
-                        vals[c] = J[i, j]
-                        rows[c] = ix_s
-                        cols[c] = ix_t
+                        vals[c] += J[i, j]
+                        rows[c] += ix_s
+                        cols[c] += ix_t
                         c += 1
 
     return vals, rows, cols, num_states
