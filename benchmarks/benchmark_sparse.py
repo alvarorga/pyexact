@@ -20,7 +20,7 @@ def benchmark_sparse_symmetric_number_conserving_op(L, N):
     for _ in range(3):
         _, _, _, _ = sparse_operators.sp_sym_pc_op(L, N, J, D)
     t1 = time.time()
-    print('Benchmark: sparse symmetric number conserving Hamiltonian.')
+    print('\nBenchmark: sparse symmetric number conserving Hamiltonian.')
     print(f'Time: {(t1-t0)/3:4.2f} s')
 
     return
@@ -36,7 +36,7 @@ def benchmark_sparse_number_conserving_op(L, N):
     for _ in range(3):
         _, _, _, _ = sparse_operators.sp_pc_op(L, N, J, D)
     t1 = time.time()
-    print('Benchmark: sparse number conserving Hamiltonian.')
+    print('\nBenchmark: sparse number conserving Hamiltonian.')
     print(f'Time: {(t1-t0)/3:4.2f} s')
 
     return
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     L = 16
     N = L//2
 
-    print(f'Running benchmarks with {L} sites and {N} particles.\n')
+    print(f'Running benchmarks with {L} sites and {N} particles.')
 
     benchmark_sparse_symmetric_number_conserving_op(L, N)
     benchmark_sparse_number_conserving_op(L, N)
