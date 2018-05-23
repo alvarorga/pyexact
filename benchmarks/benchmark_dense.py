@@ -21,7 +21,7 @@ def benchmark_dense_symmetric_number_conserving_op(L, N):
         _ = dense_operators.de_sym_pc_op(L, N, J, D)
     t1 = time.time()
     print('\nBenchmark: dense symmetric number conserving Hamiltonian.')
-    print(f'Time: {((t1-t0)/3):4.2f} s')
+    print(f'Time: {(t1-t0)/3:4.2f} s')
 
     return
 
@@ -37,7 +37,7 @@ def benchmark_dense_number_conserving_op(L, N):
         _ = dense_operators.de_pc_op(L, N, J, D)
     t1 = time.time()
     print('\nBenchmark: dense number conserving Hamiltonian.')
-    print(f'Time: {((t1-t0)/3):4.2f} s')
+    print(f'Time: {(t1-t0)/3:4.2f} s')
 
     return
 
