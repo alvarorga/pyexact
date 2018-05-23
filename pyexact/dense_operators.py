@@ -76,7 +76,10 @@ def de_sym_pc_op(L, N, J, D):
     if np.sum((J - J.T)**2) > 1e-7:
         raise ValueError('J is not symmetric.')
 
-    # Put all elts of D in the lower triangle.
+    # Put all elts of D in the lower triangle. Making a copy of D
+    # instead of working with views prevents the function to make
+    # changes in D outside of it.
+    D = np.copy(D)
     for i in range(L):
         for j in range(i):  # j < i.
             D[i, j] += D[j, i]
