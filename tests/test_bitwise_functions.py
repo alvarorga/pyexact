@@ -6,9 +6,7 @@ import unittest
 import numpy as np
 
 sys.path.append('../')
-from pyexact.bitwise_funcs import binom
-from pyexact.bitwise_funcs import count_bits
-from pyexact.bitwise_funcs import generate_states
+from pyexact.bitwise_funcs import binom, count_bits, generate_states
 
 
 class BinomTestCase(unittest.TestCase):

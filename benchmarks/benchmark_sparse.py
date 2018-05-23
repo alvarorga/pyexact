@@ -5,8 +5,7 @@ import time
 import numpy as np
 
 sys.path.append('../')
-from pyexact import sparse_operators
-
+from pyexact.sparse_operators import sp_pc_op, sp_sym_pc_op
 
 def benchmark_sparse_symmetric_number_conserving_op(L, N):
     """Benchmark construction of sym number conserving operator."""
@@ -15,10 +14,10 @@ def benchmark_sparse_symmetric_number_conserving_op(L, N):
     D = np.random.rand(L, L)
     D = (D + D.T)/2
     # Run once to compile with numba.
-    _, _, _, _ = sparse_operators.sp_sym_pc_op(L, N, J, D)
+    _, _, _, _ = sp_sym_pc_op(L, N, J, D)
     t0 = time.time()
     for _ in range(3):
-        _, _, _, _ = sparse_operators.sp_sym_pc_op(L, N, J, D)
+        _, _, _, _ = sp_sym_pc_op(L, N, J, D)
     t1 = time.time()
     print('\nBenchmark: sparse symmetric number conserving Hamiltonian.')
     print(f'Time: {(t1-t0)/3:4.2f} s')
@@ -30,11 +29,11 @@ def benchmark_sparse_number_conserving_op(L, N):
     """Benchmark construction of number conserving operator."""
     J = np.random.rand(L, L)
     D = np.random.rand(L, L)
-    _, _, _, _ = sparse_operators.sp_pc_op(L, N, J, D)
+    _, _, _, _ = sp_pc_op(L, N, J, D)
     t0 = time.time()
     # Run once to compile with numba.
     for _ in range(3):
-        _, _, _, _ = sparse_operators.sp_pc_op(L, N, J, D)
+        _, _, _, _ = sp_pc_op(L, N, J, D)
     t1 = time.time()
     print('\nBenchmark: sparse number conserving Hamiltonian.')
     print(f'Time: {(t1-t0)/3:4.2f} s')

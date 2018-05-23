@@ -6,8 +6,9 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 sys.path.append('../')
-from pyexact import sparse_operators
-
+from pyexact.sparse_operators import (
+    sp_pc_op, sp_sym_pc_op, sp_npc_op, sp_pc_correlator, sp_npc_correlator
+    )
 
 class SparseManyBodyOperatorsTestCase(unittest.TestCase):
     """Test for the functions that build sparse many body operators."""
@@ -16,7 +17,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         """Test several values of a general operator."""
         J = np.reshape(np.arange(25), (5, 5))
         D = np.reshape(25+np.arange(25), (5, 5))
-        v, r, c, ns = sparse_operators.sp_pc_op(5, 3, J, D)
+        v, r, c, ns = sp_pc_op(5, 3, J, D)
         H = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(H[0, 0], 204)
         self.assertAlmostEqual(H[1, 1], 222)
@@ -45,7 +46,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
             for i in range(j):
                 J[j, i] = J[i, j]
                 D[j, i] = D[i, j]
-        v, r, c, ns = sparse_operators.sp_sym_pc_op(5, 3, J, D)
+        v, r, c, ns = sp_sym_pc_op(5, 3, J, D)
         H = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(H[0, 0], 188)
         self.assertAlmostEqual(H[1, 1], 198)
@@ -71,7 +72,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         D = np.reshape(25+np.arange(16), (4, 4))
         r = np.arange(1, 5)
         l = np.arange(5, 9)
-        v, r, c, ns = sparse_operators.sp_npc_op(4, J, D, r, l)
+        v, r, c, ns = sp_npc_op(4, J, D, r, l)
         H = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(H[0, 0], 0)
         self.assertAlmostEqual(H[1, 1], 0)
@@ -97,7 +98,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
 
     def test_values_in_number_conserving_correlation_matrix(self):
         """Test the number conserving operators b^dagger_i*b_j."""
-        v, r, c, ns = sparse_operators.sp_pc_correlator(5, 3, 0, 2)
+        v, r, c, ns = sp_pc_correlator(5, 3, 0, 2)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[1, 3], 1)
         self.assertAlmostEqual(C[4, 6], 1)
@@ -105,7 +106,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
 
-        v, r, c, ns = sparse_operators.sp_pc_correlator(5, 3, 1, 2)
+        v, r, c, ns = sp_pc_correlator(5, 3, 1, 2)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[1, 2], 1)
         self.assertAlmostEqual(C[4, 5], 1)
@@ -113,7 +114,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
 
-        v, r, c, ns = sparse_operators.sp_pc_correlator(5, 3, 4, 3)
+        v, r, c, ns = sp_pc_correlator(5, 3, 4, 3)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[4, 1], 1)
         self.assertAlmostEqual(C[5, 2], 1)
@@ -123,7 +124,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
 
     def test_values_in_number_nonconserving_correlation_matrix(self):
         """Test the number nonconserving operators b^dagger_i*b_j."""
-        v, r, c, ns = sparse_operators.sp_npc_correlator(4, 0, 2)
+        v, r, c, ns = sp_npc_correlator(4, 0, 2)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[1, 4], 1)
         self.assertAlmostEqual(C[3, 6], 1)
@@ -132,7 +133,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), 2)
 
-        v, r, c, ns = sparse_operators.sp_npc_correlator(4, 1, 2)
+        v, r, c, ns = sp_npc_correlator(4, 1, 2)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[2, 4], 1)
         self.assertAlmostEqual(C[3, 5], 1)
@@ -141,7 +142,7 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), 2)
 
-        v, r, c, ns = sparse_operators.sp_npc_correlator(4, 3, 2)
+        v, r, c, ns = sp_npc_correlator(4, 3, 2)
         C = csr_matrix((v, (r, c)), shape=(ns, ns)).toarray()
         self.assertAlmostEqual(C[8, 4], 1)
         self.assertAlmostEqual(C[9, 5], 1)

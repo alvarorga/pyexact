@@ -3,8 +3,7 @@
 import numpy as np
 from numba import njit
 
-from pyexact.bitwise_funcs import binom
-from pyexact.bitwise_funcs import generate_states
+from pyexact.bitwise_funcs import binom, generate_states
 
 
 @njit()
