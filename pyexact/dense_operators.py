@@ -1,14 +1,18 @@
 """Scripts for computing exact diagonalizations."""
 
 import numpy as np
-from numba import njit
+from numba import njit, prange
 
 from pyexact.bitwise_funcs import generate_states
 
 
-@njit()
+@njit(parallel=True)
 def de_pc_op(L, N, J, D):
     """Build a many-body operator with 2-particle terms.
+
+    Note: numba parallel does not support the enumerate function, which
+    would make the code more readable. Instead we have to make the
+    outermost loops with range().
 
     Args:
         L (int): system's length.
@@ -29,7 +33,8 @@ def de_pc_op(L, N, J, D):
     #     s: initial state.
     #     t: final state.
     #     ix_#: index of #.
-    for (ix_s, s) in enumerate(states):
+    for ix_s in prange(num_states):
+        s = states[ix_s]
         for i in range(L):
             # On-site terms: n_i.
             if (s>>i)&1:
@@ -50,9 +55,13 @@ def de_pc_op(L, N, J, D):
     return H
 
 
-@njit()
+@njit(parallel=True)
 def de_sym_pc_op(L, N, J, D):
     """Build a many-body symmetric operator with 2-particle terms.
+
+    Note: numba parallel does not support the enumerate function, which
+    would make the code more readable. Instead we have to make the
+    outermost loops with range().
 
     Args:
         L (int): system's length.
@@ -64,7 +73,7 @@ def de_sym_pc_op(L, N, J, D):
         H (2darray of floats): many-body operator.
 
     """
-    if (np.sum((J - J.T)**2) > 1e-7):
+    if np.sum((J - J.T)**2) > 1e-7:
         raise ValueError('J is not symmetric.')
 
     # Put all elts of D in the lower triangle.
@@ -82,7 +91,8 @@ def de_sym_pc_op(L, N, J, D):
     #     s: initial state.
     #     t: final state.
     #     ix_#: index of #.
-    for (ix_s, s) in enumerate(states):
+    for ix_s in prange(num_states):
+        s = states[ix_s]
         for i in range(L):
             # On-site terms: n_i.
             if np.abs(J[i, i]) > 1e-7:

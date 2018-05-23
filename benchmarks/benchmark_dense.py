@@ -5,7 +5,7 @@ import time
 import numpy as np
 
 sys.path.append('../')
-from pyexact import dense_operators
+from pyexact.dense_operators import de_pc_op, de_sym_pc_op
 
 
 def benchmark_dense_symmetric_number_conserving_op(L, N):
@@ -15,10 +15,10 @@ def benchmark_dense_symmetric_number_conserving_op(L, N):
     D = np.random.rand(L, L)
     D = (D + D.T)/2
     # Run once to compile with numba.
-    _ = dense_operators.de_sym_pc_op(L, N, J, D)
+    _ = de_sym_pc_op(L, N, J, D)
     t0 = time.time()
     for _ in range(3):
-        _ = dense_operators.de_sym_pc_op(L, N, J, D)
+        de_sym_pc_op(L, N, J, D)
     t1 = time.time()
     print('\nBenchmark: dense symmetric number conserving Hamiltonian.')
     print(f'Time: {(t1-t0)/3:4.2f} s')
@@ -30,17 +30,16 @@ def benchmark_dense_number_conserving_op(L, N):
     """Benchmark construction of number conserving operator."""
     J = np.random.rand(L, L)
     D = np.random.rand(L, L)
-    _ = dense_operators.de_pc_op(L, N, J, D)
+    _ = de_pc_op(L, N, J, D)
     t0 = time.time()
     # Run once to compile with numba.
     for _ in range(3):
-        _ = dense_operators.de_pc_op(L, N, J, D)
+        de_pc_op(L, N, J, D)
     t1 = time.time()
     print('\nBenchmark: dense number conserving Hamiltonian.')
     print(f'Time: {(t1-t0)/3:4.2f} s')
 
     return
-
 
 if __name__ == '__main__':
 
