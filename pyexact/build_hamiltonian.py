@@ -7,16 +7,22 @@ from pyexact.dense_operators import de_pc_op, de_sym_pc_op, de_npc_op
 from pyexact.sparse_operators import sp_pc_op, sp_sym_pc_op, sp_npc_op
 
 def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
-    """Build a full many body Hamiltonian.
+    r"""Build a full many body Hamiltonian.
+
+    The supported Hamiltonians are of the form
+
+    .. math::
+
+        H = \sum_{ij} J_{ij}\ b^\dagger_i b_j + D_{ij}\ n_i n_j.
 
     Args:
-        J (2darray of floats): hopping matrix: b^dagger_i*b_j.
-        D (2darray of floats): interaction matrix: n_i*n_j.
+        J (2darray of floats): hopping matrix :math:`b^\dagger_i b_j`.
+        D (2darray of floats): interaction matrix :math:`n_i n_j`.
         L (int): system's length.
         N (int, opt): number of particles. If None, particle number is
             not conserved.
-        r (2darray of floats, opt): raising operator: b^dagger_i.
-        l (2darray of floats, opt): lowering operator: b_i.
+        r (2darray of floats, opt): raising operator :math:`b^\dagger_i`.
+        l (2darray of floats, opt): lowering operator :math:`b_i`.
 
     Returns:
         H (CSR 2darray of floats or 2darray of floats): Hamiltonian

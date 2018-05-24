@@ -8,8 +8,8 @@ Welcome to pyExact's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
+   pyexact
 
 
 Indices and tables

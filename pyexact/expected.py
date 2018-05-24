@@ -1,4 +1,4 @@
-"""Script for the automated computation of expected values."""
+"""Computation of expected values of the 2-reduced density matrices."""
 
 import numpy as np
 from scipy.sparse import csr_matrix
@@ -11,10 +11,9 @@ from pyexact.sparse_operators import sp_pc_correlator, sp_npc_correlator
 
 
 def compute_P(state, L, N=None, force_sparse=False):
-    """Compute the DOCI P matrix.
+    r"""Compute the DOCI `P` matrix.
 
-    The elements of P are:
-        P[i, j] = <b^dagger_i*b_j>.
+    `P` is defined as: :math:`P_{ij} = \langle b^\dagger_i b_j\rangle`.
 
     Args:
         state (1darray of floats): vector representation of the state.
@@ -22,11 +21,11 @@ def compute_P(state, L, N=None, force_sparse=False):
         N (int, opt): number of particles in the system. If None, the
             particle number is not conserved.
         force_sparse (bool, opt): for testing purposes. If True, the
-            sparse representation of the operator b^dagger_i*b_j is
-            always used.
+            sparse representation of the operator
+            :math:`b^\dagger_i b_j` is always used.
 
     Returns:
-        P (2darray of floats): DOCI P matrix.
+        P (2darray of floats): DOCI `P` matrix.
 
     """
     P = np.zeros((L, L), np.float64)
@@ -73,10 +72,9 @@ def compute_P(state, L, N=None, force_sparse=False):
 
 
 def compute_D(state, L, N=None):
-    """Compute the DOCI D matrix.
+    r"""Compute the DOCI `D` matrix.
 
-    The elements of D are:
-        D[i, j] = <n_i*n_j>.
+    `D` is defined as: :math:`D_{ij} = \langle n_i n_j\rangle`.
 
     Args:
         state (1darray of floats): vector representation of the state.
@@ -85,7 +83,7 @@ def compute_D(state, L, N=None):
             particle number is not conserved.
 
     Returns:
-        D (2darray of floats): DOCI D matrix.
+        D (2darray of floats): DOCI `D` matrix.
 
     """
     D = np.zeros((L, L), np.float64)
