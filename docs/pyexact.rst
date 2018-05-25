@@ -4,11 +4,11 @@ Code documentation
 Building Hamiltonians
 ---------------------
 
-.. automodule:: build_hamiltonian
+.. automodule:: pyexact.build_hamiltonian
     :members:
 
 Computing expected values
 -------------------------
 
-.. automodule:: expected
+.. automodule:: pyexact.expected
     :members: compute_P, compute_D
