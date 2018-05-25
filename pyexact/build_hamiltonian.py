@@ -30,7 +30,8 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
 
     """
     if ((np.shape(J) != (L, L)) or (np.shape(D) != (L, L))
-            or (np.size(r) != L) or (np.shape(l) != L)):
+            or (r is not None and np.size(r) != L)
+            or (l is not None and np.size(l) != L)):
         raise ValueError(f'The size L = {L} mismatches the dimension of the'
                          ' J, D, r, and/or r matrices.')
 
