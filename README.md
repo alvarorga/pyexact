@@ -5,13 +5,15 @@ full library is completed.
 
 ## Dependencies
 
-To use the library you need the following set of packages
-* Numpy
-* Scipy
-* Numba (if you cannot install Numba then you could remove all
+To use the library you need the following set of packages (in
+parentheses the library versions that I used the last time when
+testing, may not work with older ones):
+* Numpy (1.14.3)
+* Scipy (1.1.0)
+* Numba (0.38.0)(if you cannot install Numba then you could remove all
     `@njit()` decorators above the functions, but the scripts will run
      much slower)
-* Sphinx (only for building the documentation)
+* Sphinx (1.7.4)(only for building the documentation)
 
 ## Documentation
 I have not yet uploaded the docs to the Internet, but in the meantime
