@@ -8,7 +8,9 @@ full library is completed.
 To use the library you need the following set of packages
 * Numpy
 * Scipy
-* Numba (you could remove all `@njit()` decorators above the functions, but the scripts will run much slower)
+* Numba (if you cannot install Numba then you could remove all
+    `@njit()` decorators above the functions, but the scripts will run
+     much slower)
 * Sphinx (only for building the documentation)
 
 ## Documentation
@@ -18,14 +20,16 @@ you can go to the *docs* directory and put in the console
 $ make html
 ```
 This will create a set of *.html* pages in the directory *docs/_build*
-with the documentation, which explains the usage of the package.
+with the documentation, which explains the usage of the package. In
+case you cannot see the docs, a brief summary of the usage is appended
+here.
 
-## Usage
+### Usage
 
 * To build a full Hamiltonian use the function `build_mb_hamiltonian` in
 module `build_hamiltonian.py`. The function automatically takes care of
-writing the Hamiltonian in a dense or sparse format, so you do not have
-to specify.
+writing the Hamiltonian in a dense or sparse format in the most
+efficient way.
 
 * To compute the expected values of the matrices *P* and *D*, you have
 to go to functions `compute_P` and `compute_D` in module
