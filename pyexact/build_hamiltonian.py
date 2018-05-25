@@ -29,6 +29,11 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
             matrix.
 
     """
+    if ((np.shape(J) != (L, L)) or (np.shape(D) != (L, L))
+            or (np.size(r) != L) or (np.shape(l) != L)):
+        raise ValueError(f'The size L = {L} mismatches the dimension of the'
+                         ' J, D, r, and/or r matrices.')
+
     # Too many words but more explicit relations.
     is_N_conserved = True if N is not None else False
     is_H_sparse = True if L > 14 else False
