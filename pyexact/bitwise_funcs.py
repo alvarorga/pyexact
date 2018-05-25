@@ -62,6 +62,37 @@ def count_bits(s, size):
 
 
 @njit()
+def get_parity(s, i, j):
+    """Count the '1' bits in a state s between to sites i and j.
+
+    Args:
+        s (int): state given by an integer number whose binary
+            representation equals a state in the Fock space.
+        i, j (int): sites between which we count parity.
+
+    Returns:
+        p (int): +1 if the number of '1' bits between i and j is even
+            and -1 if it is odd.
+
+    Examples:
+    >>> get_parity(2, 0, 4)
+    -1
+    >>> get_parity(15, 1, 4)
+    1
+    >>> get_parity(15, 1, 3)
+    -1
+
+    """
+    # Put i, j in order.
+    i, j = sorted((i, j))
+
+    bits = 0
+    for i in range(i+1, j):
+        bits += (s>>i)&1
+    return 1-2*(bits%2)
+
+
+@njit()
 def generate_states(size, N):
     """Generate all states of a certain size with N particles.
 

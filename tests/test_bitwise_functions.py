@@ -6,8 +6,9 @@ import unittest
 import numpy as np
 
 sys.path.append('../')
-from pyexact.bitwise_funcs import binom, count_bits, generate_states
-
+from pyexact.bitwise_funcs import (
+    binom, count_bits, get_parity, generate_states
+    )
 
 class BinomTestCase(unittest.TestCase):
     """Tests for the binomial coefficient function."""
@@ -39,6 +40,19 @@ class CountBitsTestCase(unittest.TestCase):
         self.assertEqual(count_bits(3, 5), 2)
         self.assertEqual(count_bits(16, 5), 1)
         self.assertEqual(count_bits(14, 5), 3)
+
+
+# class GetParityTestCase(unittest.TestCase):
+#     """Tests for the parity function."""
+#
+#     def test_parity_of_several_states(self):
+#         """Test several binom outputs."""
+#         self.assertEqual(get_parity(1, 0, 1), 1)
+#         self.assertEqual(get_parity(3, 2, 0), -1)
+#         self.assertEqual(get_parity(15, 0, 4), -1)
+#         self.assertEqual(get_parity(15, 1, 4), 1)
+#         self.assertEqual(get_parity(15, 2, 4), -1)
+#         self.assertEqual(get_parity(15, 3, 4), 1)
 
 
 class GenerateStatesTestCase(unittest.TestCase):
