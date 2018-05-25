@@ -15,6 +15,14 @@ def binom(N, n):
     Returns:
         bi (int): binomial coefficient of (N n).
 
+    Examples:
+    >>> binom(6, 3)
+    20
+    >>> binom(5, 1)
+    5
+    >>> binom(7, 3)
+    35
+
     """
     n = max(n, N-n)
     bi = 1
@@ -37,6 +45,14 @@ def count_bits(s, size):
 
     Returns:
         bits (int): number of bits in the state.
+
+    Examples:
+    >>> count_bits(4, 5)
+    1
+    >>> count_bits(5, 5)
+    2
+    >>> count_bits(7, 5)
+    3
 
     """
     bits = 0
