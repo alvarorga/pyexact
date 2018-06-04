@@ -40,6 +40,14 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
     is_H_sparse = True if L > 14 else False
     is_J_symmetric = True if np.allclose(J, J.T) else False
 
+    # Initialize r and l to 0 if N is not conserved and these matrices
+    # are not given.
+    if not is_N_conserved:
+        if r is None:
+            r = np.zeros(L, np.float64)
+        if l is None:
+            l = np.zeros(L, np.float64)
+
     if is_N_conserved:
         if is_H_sparse:
             if is_J_symmetric:
