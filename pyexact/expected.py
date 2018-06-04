@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from pyexact.dense_operators import (
+from pyexact.dense_hardcore_operators import (
     de_pc_number_op, de_pc_correlator, de_pc_interaction,
     de_npc_number_op, de_npc_correlator, de_npc_interaction
     )

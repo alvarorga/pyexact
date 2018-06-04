@@ -3,7 +3,10 @@
 import numpy as np
 from numba import njit, prange
 
-from pyexact.bitwise_funcs import generate_states
+from pyexact.bitwise_funcs import generate_states, get_parity
+
+
+# Hard-core boson operators.
 
 
 @njit(parallel=True)
@@ -332,3 +335,55 @@ def de_npc_interaction(L, i, j):
             C[s] += 1
 
     return C
+
+
+# Fermionic operators.
+
+
+def fer_de_pc_op(L, N, J, D):
+    """Build a many-body fermionic operator with 2-particle terms.
+
+    Note: numba parallel does not support the enumerate function, which
+    would make the code more readable. Instead we have to make the
+    outermost loops with range().
+
+    Args:
+        L (int): system's length.
+        N (int): particle number.
+        J (2darray of floats): hopping matrix.
+        D (2darray of floats): interaction matrix.
+
+    Returns:
+        H (2darray of floats): many-body operator.
+
+    """
+    states = generate_states(L, N)
+    num_states = states.size
+
+    H = np.zeros((num_states, num_states), np.float64)
+
+    # Notation:
+    #     s: initial state.
+    #     t: final state.
+    #     ix_#: index of #.
+    for ix_s in prange(num_states):
+        s = states[ix_s]
+        for i in range(L):
+            # On-site terms: n_i.
+            if (s>>i)&1:
+                H[ix_s, ix_s] += J[i, i]
+
+            for j in range(L):
+                if i != j:
+                    # Hopping terms: b^dagger_i b_j.
+                    if not (s>>i)&1 and (s>>j)&1:
+                        t = s + (1<<i) - (1<<j)
+                        par = get_parity(t, i, j)
+                        ix_t = np.where(states == t)[0][0]
+                        H[ix_t, ix_s] += par*J[i, j]
+
+                    # Interaction terms: n_i n_j.
+                    if (s>>i)&1 and (s>>j)&1:
+                        H[ix_s, ix_s] += D[i, j]
+
+    return H

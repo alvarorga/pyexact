@@ -3,10 +3,12 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from pyexact.dense_operators import de_pc_op, de_sym_pc_op, de_npc_op
+from pyexact.dense_hardcore_operators import de_pc_op, de_sym_pc_op, de_npc_op
 from pyexact.sparse_operators import sp_pc_op, sp_sym_pc_op, sp_npc_op
+from pyexact.dense_fermionic_operators import fer_de_pc_op
 
-def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
+
+def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None, is_fermionic=False):
     r"""Build a full many body Hamiltonian.
 
     The supported Hamiltonians are of the form
@@ -23,6 +25,8 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
             not conserved.
         r (2darray of floats, opt): raising operator :math:`b^\dagger_i`.
         l (2darray of floats, opt): lowering operator :math:`b_i`.
+        is_fermionic (bool, opt): True if Hamiltonian has fermionic
+            statistics.
 
     Returns:
         H (CSR 2darray of floats or 2darray of floats): Hamiltonian
@@ -48,23 +52,27 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None):
         if l is None:
             l = np.zeros(L, np.float64)
 
-    if is_N_conserved:
-        if is_H_sparse:
-            if is_J_symmetric:
-                v, r, c, ns = sp_sym_pc_op(L, N, J, D)
+    # Select the properties of the Hamiltonian and compute it.
+    if not is_fermionic:
+        if is_N_conserved:
+            if is_H_sparse:
+                if is_J_symmetric:
+                    v, r, c, ns = sp_sym_pc_op(L, N, J, D)
+                else:
+                    v, r, c, ns = sp_pc_op(L, N, J, D)
+                H = csr_matrix((v, (r, c)), shape=(ns, ns))
             else:
-                v, r, c, ns = sp_pc_op(L, N, J, D)
-            H = csr_matrix((v, (r, c)), shape=(ns, ns))
+                if is_J_symmetric:
+                    H = de_sym_pc_op(L, N, J, D)
+                else:
+                    H = de_pc_op(L, N, J, D)
         else:
-            if is_J_symmetric:
-                H = de_sym_pc_op(L, N, J, D)
+            if is_H_sparse:
+                v, r, c, ns = sp_npc_op(L, J, D, r, l)
+                H = csr_matrix((v, (r, c)), shape=(ns, ns))
             else:
-                H = de_pc_op(L, N, J, D)
+                H = de_npc_op(L, J, D, r, l)
     else:
-        if is_H_sparse:
-            v, r, c, ns = sp_npc_op(L, J, D, r, l)
-            H = csr_matrix((v, (r, c)), shape=(ns, ns))
-        else:
-            H = de_npc_op(L, J, D, r, l)
+        H = fer_de_pc_op(L, N, J, D)
 
     return H
