@@ -21,8 +21,8 @@ class NumberConservingPMatrixTestCase(unittest.TestCase):
         self.N = 3
         self.state = np.arange(10)
 
-    def test_number_conserving_dense_P_matrix(self):
-        """Test several chosen values in a density matrix.
+    def test_number_conserving_dense_hardcore_P_matrix(self):
+        """Test several chosen values in a hardcore density matrix.
 
         The matrix is build using the dense representation of the
         b^dagger_i*b_j operator.
@@ -39,6 +39,26 @@ class NumberConservingPMatrixTestCase(unittest.TestCase):
         self.assertAlmostEqual(P[0, 4], 26)
         self.assertAlmostEqual(P[1, 2], 94)
         self.assertAlmostEqual(P[4, 2], 38)
+        self.assertAlmostEqual(P[4, 3], 32)
+
+    def test_number_conserving_dense_fermionic_P_matrix(self):
+        """Test several chosen values in a fermionic density matrix.
+
+        The matrix is build using the dense representation of the
+        c^dagger_i*c_j operator.
+        """
+        P = compute_P(self.state, self.L, self.N, is_fermionic=True)
+
+        # Compute expected values of number operator.
+        self.assertAlmostEqual(P[0, 0], 95)
+        self.assertAlmostEqual(P[1, 1], 126)
+        self.assertAlmostEqual(P[2, 2], 155)
+        self.assertAlmostEqual(P[4, 4], 271)
+
+        # Compute expected values of operator b^dagger_i*b_j.
+        self.assertAlmostEqual(P[0, 4], 26)
+        self.assertAlmostEqual(P[1, 2], 94)
+        self.assertAlmostEqual(P[4, 2], -38)
         self.assertAlmostEqual(P[4, 3], 32)
 
     def test_number_conserving_sparse_P_matrix(self):

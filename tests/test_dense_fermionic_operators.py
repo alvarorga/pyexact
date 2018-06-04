@@ -7,7 +7,7 @@ import numpy as np
 
 sys.path.append('../')
 from pyexact.dense_fermionic_operators import (
-    fer_de_pc_op, fer_de_sym_pc_op
+    fer_de_pc_op, fer_de_sym_pc_op, fer_de_pc_correlator
     )
 
 class ManyBodyFermionicOperatorsTestCase(unittest.TestCase):
@@ -63,3 +63,26 @@ class ManyBodyFermionicOperatorsTestCase(unittest.TestCase):
         self.assertAlmostEqual(H[8, 2], 0)
         self.assertAlmostEqual(H[8, 3], -14)
         self.assertAlmostEqual(H[9, 2], 4)
+
+    def test_values_in_number_conserving_correlation_matrix(self):
+        """Test values of number conserving correlations b^dagger_i*b_j."""
+        C = fer_de_pc_correlator(5, 3, 0, 2)
+        self.assertAlmostEqual(C[1, 3], -1)
+        self.assertAlmostEqual(C[4, 6], -1)
+        self.assertAlmostEqual(C[7, 9], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
+
+        C = fer_de_pc_correlator(5, 3, 1, 3)
+        self.assertAlmostEqual(C[0, 2], -1)
+        self.assertAlmostEqual(C[4, 7], 1)
+        self.assertAlmostEqual(C[6, 9], -1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
+
+        C = fer_de_pc_correlator(5, 3, 4, 3)
+        self.assertAlmostEqual(C[4, 1], 1)
+        self.assertAlmostEqual(C[5, 2], 1)
+        self.assertAlmostEqual(C[6, 3], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))

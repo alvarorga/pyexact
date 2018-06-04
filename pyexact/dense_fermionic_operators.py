@@ -232,7 +232,7 @@ def de_pc_correlator(L, N, i, j):
 
 @njit()
 def de_pc_interaction(L, N, i, j):
-    """Build the many-body operator n_i n_j.
+    """Build the many-body operator n_i*n_j.
 
     Args:
         L (int): system's length.
@@ -453,3 +453,34 @@ def fer_de_sym_pc_op(L, N, J, D):
                         H[ix_s, ix_s] += D[i, j]
 
     return H
+
+
+def fer_de_pc_correlator(L, N, i, j):
+    """Build a many-body fermionic correlation b^dagger_i*b_j, i != j.
+
+    Args:
+        L (int): system's length.
+        N (int): particle number.
+        i (int): position of the creation operator.
+        j (int): position of the annihilation operator.
+
+    Returns:
+        C (2darray of floats): many-body corelation operator.
+
+    """
+    if i == j:
+        raise ValueError('i and j must be different.')
+
+    states = generate_states(L, N)
+    num_states = states.size
+
+    C = np.zeros((num_states, num_states), np.float64)
+
+    for ix_s, s in enumerate(states):
+        if (not (s>>i)&1) and ((s>>j)&1):
+            t = s + (1<<i) - (1<<j)
+            par = get_parity(t, i, j)
+            ix_t = np.where(states==t)[0][0]
+            C[ix_t, ix_s] += par
+
+    return C
