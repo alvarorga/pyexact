@@ -4,7 +4,7 @@ Code documentation
 Building Hamiltonians
 ---------------------
 
-.. automodule:: pyexact.build_hamiltonian
+.. automodule:: pyexact.build_mb_hamiltonian
     :members:
 
 Computing expected values

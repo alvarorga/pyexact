@@ -28,7 +28,7 @@ here.
 ### Usage
 
 * To build a full Hamiltonian use the function `build_mb_hamiltonian` in
-module `build_hamiltonian.py`. The function automatically takes care of
+module `build_mb_hamiltonian.py`. The function automatically takes care of
 writing the Hamiltonian in a dense or sparse format in the most
 efficient way.
 

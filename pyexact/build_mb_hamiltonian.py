@@ -15,7 +15,12 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None, is_fermionic=False):
 
     .. math::
 
-        H = \sum_{ij} J_{ij}\ b^\dagger_i b_j + D_{ij}\ n_i n_j.
+        H = \sum_{ij} J_{ij}\ d^\dagger_i d_j + D_{ij}\ n_i n_j,
+
+    where :math:`d^\dagger_i` can be either a hard-core boson creation
+    operator :math:`b^\dagger_i` or a fermionic creation operator
+    :math:`c^\dagger_i`, and :math:`n_i` is the usual number operator
+    :math:`b^\dagger_i b_i` and :math:`c^\dagger_i c_i`.
 
     Args:
         J (2darray of floats): hopping matrix :math:`b^\dagger_i b_j`.
@@ -29,8 +34,7 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None, is_fermionic=False):
             statistics.
 
     Returns:
-        H (CSR 2darray of floats or 2darray of floats): Hamiltonian
-            matrix.
+        H (CSR of floats or 2darray of floats): Hamiltonian matrix.
 
     """
     if ((np.shape(J) != (L, L)) or (np.shape(D) != (L, L))
