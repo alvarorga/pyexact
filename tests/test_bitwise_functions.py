@@ -7,7 +7,7 @@ import numpy as np
 
 sys.path.append('../')
 from pyexact.bitwise_funcs import (
-    binom, count_bits, get_parity, generate_states
+    binom, count_bits, get_parity, get_parity_at_i, generate_states
     )
 
 class BinomTestCase(unittest.TestCase):
@@ -42,18 +42,29 @@ class CountBitsTestCase(unittest.TestCase):
         self.assertEqual(count_bits(14, 5), 3)
 
 
-# class GetParityTestCase(unittest.TestCase):
-#     """Tests for the parity function."""
-#
-#     def test_parity_of_several_states(self):
-#         """Test several binom outputs."""
-#         self.assertEqual(get_parity(1, 0, 1), 1)
-#         self.assertEqual(get_parity(3, 2, 0), -1)
-#         self.assertEqual(get_parity(15, 0, 4), -1)
-#         self.assertEqual(get_parity(15, 1, 4), 1)
-#         self.assertEqual(get_parity(15, 2, 4), -1)
-#         self.assertEqual(get_parity(15, 3, 4), 1)
+class GetParityTestCase(unittest.TestCase):
+    """Tests for the parity function."""
 
+    def test_parity_between_i_and_j(self):
+        """Test parity of states between two sites."""
+        self.assertEqual(get_parity(1, 0, 1), 1)
+        self.assertEqual(get_parity(3, 2, 0), -1)
+        self.assertEqual(get_parity(15, 0, 4), -1)
+        self.assertEqual(get_parity(15, 1, 4), 1)
+        self.assertEqual(get_parity(15, 2, 4), -1)
+        self.assertEqual(get_parity(15, 3, 4), 1)
+
+    def test_parity_from_0_to_i(self):
+        """Test parity at site i."""
+        self.assertEqual(get_parity_at_i(1, 2), -1)
+        self.assertEqual(get_parity_at_i(3, 3), 1)
+        self.assertEqual(get_parity_at_i(15, 0), 1)
+        self.assertEqual(get_parity_at_i(15, 1), -1)
+        self.assertEqual(get_parity_at_i(15, 2), 1)
+        self.assertEqual(get_parity_at_i(15, 3), -1)
+        self.assertEqual(get_parity_at_i(15, 4), 1)
+        self.assertEqual(get_parity_at_i(15, 5), 1)
+        
 
 class GenerateStatesTestCase(unittest.TestCase):
     """Tests for the generate states function."""

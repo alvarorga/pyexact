@@ -87,8 +87,36 @@ def get_parity(s, i, j):
     i, j = sorted((i, j))
 
     bits = 0
-    for i in range(i+1, j):
-        bits += (s>>i)&1
+    for k in range(i+1, j):
+        bits += (s>>k)&1
+    return 1-2*(bits%2)
+
+
+@njit()
+def get_parity_at_i(s, i):
+    """Count the '1' bits in a state s from 0 (inclusive) to i.
+
+    Args:
+        s (int): state given by an integer number whose binary
+            representation equals a state in the Fock space.
+        i (int): site until which parity is counted.
+
+    Returns:
+        p (int): +1 if the number of '1' bits from 0 to i is even and
+            -1 if it is odd.
+
+    Examples:
+    >>> get_parity_at_i(2, 3)
+    -1
+    >>> get_parity_at_i(15, 2)
+    1
+    >>> get_parity_at_i(7, 4)
+    -1
+
+    """
+    bits = 0
+    for k in range(i):
+        bits += (s>>k)&1
     return 1-2*(bits%2)
 
 
