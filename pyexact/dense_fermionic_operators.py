@@ -3,10 +3,7 @@
 import numpy as np
 from numba import njit, prange
 
-from pyexact.bitwise_funcs import generate_states, get_parity
-
-
-# Fermion operators.
+from pyexact.bitwise_funcs import generate_states, get_parity, get_parity_at_i
 
 
 @njit(parallel=True)
@@ -124,9 +121,9 @@ def fer_de_sym_pc_op(L, N, J, D):
     return H
 
 
-@njit()
-def de_npc_op(L, J, D, r, l):
-    """Build a dense number nonconserving operator.
+@njit(parallel=True)
+def fer_de_npc_op(L, J, D, r, l):
+    """Build a dense fermionic number nonconserving operator.
 
     Args:
         L (int): system's length.
@@ -157,7 +154,8 @@ def de_npc_op(L, J, D, r, l):
                     # Hopping terms: b^dagger_i*b_j.
                     if not (s>>i)&1 and (s>>j)&1:
                         t = s + (1<<i) - (1<<j)
-                        H[t, s] += J[i, j]
+                        par = get_parity(t, i, j)
+                        H[t, s] += par*J[i, j]
 
                     # Interaction terms: n_i*n_j.
                     if (s>>i)&1 and (s>>j)&1:
@@ -166,12 +164,14 @@ def de_npc_op(L, J, D, r, l):
             # Raising operator: b^dagger_i.
             if not (s>>i)&1:
                 t = s + (1<<i)
-                H[t, s] += r[i]
+                par = get_parity_at_i(t, i)
+                H[t, s] += par*r[i]
 
             # Lowering operator: b_i.
             if (s>>i)&1:
                 t = s - (1<<i)
-                H[t, s] += l[i]
+                par = get_parity_at_i(t, i)
+                H[t, s] += par*l[i]
 
     return H
 
