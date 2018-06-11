@@ -3,7 +3,7 @@
 import numpy as np
 from numba import njit, prange
 
-from pyexact.bitwise_funcs import generate_states, get_parity
+from pyexact.bitwise_funcs import generate_states
 
 
 # Hard-core boson operators.

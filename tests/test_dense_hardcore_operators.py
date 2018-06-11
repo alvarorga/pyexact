@@ -12,6 +12,7 @@ from pyexact.dense_hardcore_operators import (
     de_npc_number_op, de_npc_correlator, de_npc_interaction
     )
 
+
 class ManyBodyOperatorsTestCase(unittest.TestCase):
     """Test for the functions that build many body operators."""
 

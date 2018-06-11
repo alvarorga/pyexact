@@ -10,6 +10,7 @@ from pyexact.bitwise_funcs import (
     binom, count_bits, get_parity, get_parity_at_i, generate_states
     )
 
+
 class BinomTestCase(unittest.TestCase):
     """Tests for the binomial coefficient function."""
 
@@ -64,7 +65,7 @@ class GetParityTestCase(unittest.TestCase):
         self.assertEqual(get_parity_at_i(15, 3), -1)
         self.assertEqual(get_parity_at_i(15, 4), 1)
         self.assertEqual(get_parity_at_i(15, 5), 1)
-        
+
 
 class GenerateStatesTestCase(unittest.TestCase):
     """Tests for the generate states function."""

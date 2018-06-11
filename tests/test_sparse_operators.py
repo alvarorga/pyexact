@@ -10,6 +10,7 @@ from pyexact.sparse_operators import (
     sp_pc_op, sp_sym_pc_op, sp_npc_op, sp_pc_correlator, sp_npc_correlator
     )
 
+
 class SparseManyBodyOperatorsTestCase(unittest.TestCase):
     """Test for the functions that build sparse many body operators."""
 

@@ -81,6 +81,7 @@ class NumberConservingPMatrixTestCase(unittest.TestCase):
         self.assertAlmostEqual(P[4, 2], 38)
         self.assertAlmostEqual(P[4, 3], 32)
 
+
 class NumberConservingDMatrixTestCase(unittest.TestCase):
     """Test the computation of the D matrix.
 
@@ -101,6 +102,7 @@ class NumberConservingDMatrixTestCase(unittest.TestCase):
         self.assertAlmostEqual(D[1, 2], 45)
         self.assertAlmostEqual(D[4, 2], 142)
         self.assertAlmostEqual(D[4, 3], 194)
+
 
 class NumberNonConservingPMatrixTestCase(unittest.TestCase):
     """Test the computation of the P matrix.
@@ -152,6 +154,7 @@ class NumberNonConservingPMatrixTestCase(unittest.TestCase):
         self.assertAlmostEqual(P[1, 2], 286)
         self.assertAlmostEqual(P[3, 2], 214)
         self.assertAlmostEqual(P[1, 3], 206)
+
 
 class NumberNonConservingDMatrixTestCase(unittest.TestCase):
     """Test the computation of the P matrix.
