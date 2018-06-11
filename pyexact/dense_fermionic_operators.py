@@ -209,31 +209,8 @@ def fer_de_pc_correlator(L, N, i, j):
 
 
 @njit()
-def de_npc_number_op(L, i):
-    """Build a dense number nonconserving number operator.
-
-    Args:
-        L (int): system's length.
-        i (int): site of the number operator.
-
-    Returns:
-        C (1darray of floats): many-body number operator.
-
-    """
-    num_states = 1<<L
-
-    C = np.zeros(num_states, np.float64)
-
-    for s in range(1<<L):
-        if (s>>i)&1:
-            C[s] += 1
-
-    return C
-
-
-@njit()
-def de_npc_correlator(L, i, j):
-    """Build a dense number nonconserving correlation b^dagger_i*b_j.
+def fer_de_npc_correlator(L, i, j):
+    """Build a dense number nonconserving fermionic correlation.
 
     Args:
         L (int): system's length.
@@ -254,33 +231,7 @@ def de_npc_correlator(L, i, j):
     for s in range(1<<L):
         if not (s>>i)&1 and (s>>j)&1:
             t = s + (1<<i) - (1<<j)
-            C[t, s] += 1
-
-    return C
-
-
-@njit()
-def de_npc_interaction(L, i, j):
-    """Build a dense number nonconserving interaction n_i*n_j.
-
-    Args:
-        L (int): system's length.
-        i (int): site of one number operator.
-        j (int): site of the other number operator.
-
-    Returns:
-        C (1darray of floats): many-body interaction operator.
-
-    """
-    if i == j:
-        raise ValueError('i and j must be different.')
-
-    num_states = 1<<L
-
-    C = np.zeros(num_states, np.float64)
-
-    for s in range(1<<L):
-        if (s>>i)&1 and (s>>j)&1:
-            C[s] += 1
+            par = get_parity(t, i, j)
+            C[t, s] += par
 
     return C

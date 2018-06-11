@@ -8,8 +8,9 @@ import numpy as np
 sys.path.append('../')
 from pyexact.dense_fermionic_operators import (
     fer_de_pc_op, fer_de_sym_pc_op, fer_de_npc_op,
-    fer_de_pc_correlator
+    fer_de_pc_correlator, fer_de_npc_correlator
     )
+
 
 class ManyBodyFermionicOperatorsTestCase(unittest.TestCase):
     """Test the functions that build many-body fermionic operators."""
@@ -95,7 +96,7 @@ class ManyBodyFermionicOperatorsTestCase(unittest.TestCase):
         self.assertAlmostEqual(H[15, 13], -2)
 
     def test_values_in_number_conserving_correlation_matrix(self):
-        """Test values of number conserving correlations b^dagger_i*b_j."""
+        """Test values of number conserving correlations c^dagger_i*c_j."""
         C = fer_de_pc_correlator(5, 3, 0, 2)
         self.assertAlmostEqual(C[1, 3], -1)
         self.assertAlmostEqual(C[4, 6], -1)
@@ -116,3 +117,29 @@ class ManyBodyFermionicOperatorsTestCase(unittest.TestCase):
         self.assertAlmostEqual(C[6, 3], 1)
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), np.sqrt(3))
+
+    def test_values_in_number_nonconserving_correlation_matrix(self):
+        """Test values of number nonconserving correlations."""
+        C = fer_de_npc_correlator(4, 0, 2)
+        self.assertAlmostEqual(C[1, 4], 1)
+        self.assertAlmostEqual(C[3, 6], -1)
+        self.assertAlmostEqual(C[9, 12], 1)
+        self.assertAlmostEqual(C[11, 14], -1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), 2)
+
+        C = fer_de_npc_correlator(4, 1, 2)
+        self.assertAlmostEqual(C[2, 4], 1)
+        self.assertAlmostEqual(C[3, 5], 1)
+        self.assertAlmostEqual(C[10, 12], 1)
+        self.assertAlmostEqual(C[11, 13], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), 2)
+
+        C = fer_de_npc_correlator(4, 3, 2)
+        self.assertAlmostEqual(C[8, 4], 1)
+        self.assertAlmostEqual(C[9, 5], 1)
+        self.assertAlmostEqual(C[10, 6], 1)
+        self.assertAlmostEqual(C[11, 7], 1)
+        # Make sure that the other elts are 0.
+        self.assertAlmostEqual(np.linalg.norm(C), 2)

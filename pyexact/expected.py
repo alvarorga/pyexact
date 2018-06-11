@@ -8,7 +8,7 @@ from pyexact.dense_hardcore_operators import (
     de_npc_number_op, de_npc_correlator, de_npc_interaction
     )
 from pyexact.dense_fermionic_operators import (
-    fer_de_pc_correlator
+    fer_de_pc_correlator, fer_de_npc_correlator
     )
 from pyexact.sparse_operators import sp_pc_correlator, sp_npc_correlator
 
@@ -71,13 +71,17 @@ def compute_P(state, L, N=None, is_fermionic=False, force_sparse=False):
         # Correlation terms.
         for i in range(L):
             for j in range(i):  # j < i.
-                if is_sparse:
-                    v, r, c, ns = sp_npc_correlator(L, i, j)
-                    bibj = csr_matrix((v, (r, c)), shape=(ns, ns))
-                    P[i, j] = np.dot(state, bibj.dot(state))
-                else:
-                    bibj = de_npc_correlator(L, i, j)
+                if is_fermionic:
+                    bibj = fer_de_npc_correlator(L, i, j)
                     P[i, j] = np.dot(state, np.dot(bibj, state))
+                else:
+                    if is_sparse:
+                        v, r, c, ns = sp_npc_correlator(L, i, j)
+                        bibj = csr_matrix((v, (r, c)), shape=(ns, ns))
+                        P[i, j] = np.dot(state, bibj.dot(state))
+                    else:
+                        bibj = de_npc_correlator(L, i, j)
+                        P[i, j] = np.dot(state, np.dot(bibj, state))
                 P[j, i] = P[i, j]
 
     return P
