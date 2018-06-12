@@ -1,4 +1,4 @@
-"""Test exact diagonalization of sparse matrices."""
+"""Test exact diagonalization of hard-core boson sparse matrices."""
 
 import sys
 import unittest
@@ -6,7 +6,7 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 sys.path.append('../')
-from pyexact.sparse_operators import (
+from pyexact.sparse_hardcore_operators import (
     sp_pc_op, sp_sym_pc_op, sp_npc_op, sp_pc_correlator, sp_npc_correlator
     )
 
@@ -151,7 +151,3 @@ class SparseManyBodyOperatorsTestCase(unittest.TestCase):
         self.assertAlmostEqual(C[11, 7], 1)
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(C), 2)
-
-
-if __name__ == '__main__':
-    unittest.main()

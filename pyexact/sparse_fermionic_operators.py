@@ -1,9 +1,11 @@
-"""Exact diagonalization of sparse Hamiltonians."""
+"""Exact diagonalization of sparse fermionic Hamiltonians."""
 
 import numpy as np
 from numba import njit
 
-from pyexact.bitwise_funcs import binom, generate_states
+from pyexact.bitwise_funcs import (
+    binom, generate_states, get_parity, get_parity_at_i
+    )
 
 
 @njit()
@@ -19,8 +21,8 @@ def count_nnz_off_diagonal(A):
 
 
 @njit()
-def sp_pc_op(L, N, J, D):
-    """Compute the data/rows/cols of a mb operator in sparse CSR format.
+def fer_sp_pc_op(L, N, J, D):
+    """Compute the sparse CSR data of a mb fermionic operator.
 
     Note: if jit is not used, the loops must be done with np.arange
         because the 'right shift' function (>>) needs to operate with
@@ -74,7 +76,8 @@ def sp_pc_op(L, N, J, D):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
                         ix_t = np.where(states == t)[0][0]
-                        vals[c] += J[i, j]
+                        par = get_parity(s, i, j)
+                        vals[c] += par*J[i, j]
                         rows[c] += ix_t
                         cols[c] += ix_s
                         c += 1
@@ -83,8 +86,8 @@ def sp_pc_op(L, N, J, D):
 
 
 @njit()
-def sp_sym_pc_op(L, N, J, D):
-    """Compute sparse matrix of a symmetric operator.
+def fer_sp_sym_pc_op(L, N, J, D):
+    """Compute sparse matrix of a symmetric fermionic operator.
 
     Note: if jit is not used, the loops must be done with np.arange
         because the 'right shift' function (>>) needs to operate with
@@ -142,11 +145,12 @@ def sp_sym_pc_op(L, N, J, D):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
                         ix_t = np.where(states == t)[0][0]
-                        vals[c] += J[i, j]
+                        par = get_parity(s, i, j)
+                        vals[c] += par*J[i, j]
                         rows[c] += ix_t
                         cols[c] += ix_s
                         c += 1
-                        vals[c] += J[i, j]
+                        vals[c] += par*J[i, j]
                         rows[c] += ix_s
                         cols[c] += ix_t
                         c += 1
@@ -155,8 +159,8 @@ def sp_sym_pc_op(L, N, J, D):
 
 
 @njit()
-def sp_npc_op(L, J, D, r, l):
-    """Compute sparse matrix of number nonconserving operator.
+def fer_sp_npc_op(L, J, D, r, l):
+    """Compute sparse matrix of number nonconserving fermionic operator.
 
     Args:
         L (int): system's length.
@@ -211,7 +215,8 @@ def sp_npc_op(L, J, D, r, l):
                 if (np.abs(J[i, j]) > 1e-7):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
-                        vals[c] += J[i, j]
+                        par = get_parity(s, i, j)
+                        vals[c] += par*J[i, j]
                         rows[c] = t
                         cols[c] = s
                         c += 1
@@ -219,7 +224,8 @@ def sp_npc_op(L, J, D, r, l):
                 if (np.abs(J[j, i]) > 1e-7):
                     if (not (s>>j)&np.uint16(1)) and ((s>>i)&np.uint16(1)):
                         t = s + (1<<j) - (1<<i)
-                        vals[c] += J[j, i]
+                        par = get_parity(s, i, j)
+                        vals[c] += par*J[j, i]
                         rows[c] = t
                         cols[c] = s
                         c += 1
@@ -229,7 +235,8 @@ def sp_npc_op(L, J, D, r, l):
             if (np.abs(r[i]) > 1e-7):
                 if not (s>>i)&np.uint16(1):
                     t = s + (1<<i)
-                    vals[c] += r[i]
+                    par = get_parity_at_i(s, i)
+                    vals[c] += par*r[i]
                     rows[c] = t
                     cols[c] = s
                     c += 1
@@ -239,7 +246,8 @@ def sp_npc_op(L, J, D, r, l):
             if (np.abs(l[i]) > 1e-7):
                 if (s>>i)&np.uint16(1):
                     t = s - (1<<i)
-                    vals[c] += l[i]
+                    par = get_parity_at_i(s, i)
+                    vals[c] += par*l[i]
                     rows[c] = t
                     cols[c] = s
                     c += 1
@@ -247,8 +255,8 @@ def sp_npc_op(L, J, D, r, l):
     return vals, rows, cols, num_states
 
 
-def sp_pc_correlator(L, N, i, j):
-    """Build a many-body correlation operator b^dagger_i*b_j, i != j.
+def fer_sp_pc_correlator(L, N, i, j):
+    """Build a many-body fermionic correlation c^dagger_i*c_j, i != j.
 
     Args:
         L (int): system's length.
@@ -278,7 +286,8 @@ def sp_pc_correlator(L, N, i, j):
         if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
             t = s + (1<<i) - (1<<j)
             ix_t = np.where(states == t)[0][0]
-            vals[c] += 1
+            par = get_parity(s, i, j)
+            vals[c] += par
             rows[c] = ix_t
             cols[c] = ix_s
             c += 1
@@ -287,8 +296,8 @@ def sp_pc_correlator(L, N, i, j):
 
 
 @njit()
-def sp_npc_correlator(L, i, j):
-    """Compute sparse matrix of number nonconserving correlator.
+def fer_sp_npc_correlator(L, i, j):
+    """Compute sparse number nonconserving fermionic correlator.
 
     Args:
         L (int): system's length.
@@ -315,7 +324,8 @@ def sp_npc_correlator(L, i, j):
     for s in range(num_states):
         if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
             t = s + (1<<i) - (1<<j)
-            vals[c] += 1
+            par = get_parity(s, i, j)
+            vals[c] += par
             rows[c] = t
             cols[c] = s
             c += 1

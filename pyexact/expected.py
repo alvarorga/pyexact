@@ -10,7 +10,12 @@ from pyexact.dense_hardcore_operators import (
 from pyexact.dense_fermionic_operators import (
     fer_de_pc_correlator, fer_de_npc_correlator
     )
-from pyexact.sparse_operators import sp_pc_correlator, sp_npc_correlator
+from pyexact.sparse_hardcore_operators import (
+    sp_pc_correlator, sp_npc_correlator
+    )
+from pyexact.sparse_fermionic_operators import (
+    fer_sp_pc_correlator, fer_sp_npc_correlator
+    )
 
 
 def compute_P(state, L, N=None, is_fermionic=False, force_sparse=False):
@@ -50,7 +55,15 @@ def compute_P(state, L, N=None, is_fermionic=False, force_sparse=False):
         # Correlation terms.
         for i in range(L):
             for j in range(i):  # j < i.
-                if not is_fermionic:
+                if is_fermionic:
+                    if is_sparse:
+                        v, r, c, ns = fer_sp_pc_correlator(L, N, i, j)
+                        bibj = csr_matrix((v, (r, c)), shape=(ns, ns))
+                        P[i, j] = np.dot(state, bibj.dot(state))
+                    else:
+                        bibj = fer_de_pc_correlator(L, N, i, j)
+                        P[i, j] = np.dot(state, np.dot(bibj, state))
+                else:
                     if is_sparse:
                         v, r, c, ns = sp_pc_correlator(L, N, i, j)
                         bibj = csr_matrix((v, (r, c)), shape=(ns, ns))
@@ -58,9 +71,6 @@ def compute_P(state, L, N=None, is_fermionic=False, force_sparse=False):
                     else:
                         bibj = de_pc_correlator(L, N, i, j)
                         P[i, j] = np.dot(state, np.dot(bibj, state))
-                else:
-                    bibj = fer_de_pc_correlator(L, N, i, j)
-                    P[i, j] = np.dot(state, np.dot(bibj, state))
                 P[j, i] = P[i, j]
     else:
         # Number operator.
@@ -72,8 +82,13 @@ def compute_P(state, L, N=None, is_fermionic=False, force_sparse=False):
         for i in range(L):
             for j in range(i):  # j < i.
                 if is_fermionic:
-                    bibj = fer_de_npc_correlator(L, i, j)
-                    P[i, j] = np.dot(state, np.dot(bibj, state))
+                    if is_sparse:
+                        v, r, c, ns = fer_sp_npc_correlator(L, i, j)
+                        bibj = csr_matrix((v, (r, c)), shape=(ns, ns))
+                        P[i, j] = np.dot(state, bibj.dot(state))
+                    else:
+                        bibj = fer_de_npc_correlator(L, i, j)
+                        P[i, j] = np.dot(state, np.dot(bibj, state))
                 else:
                     if is_sparse:
                         v, r, c, ns = sp_npc_correlator(L, i, j)

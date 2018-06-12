@@ -4,8 +4,13 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 from pyexact.dense_hardcore_operators import de_pc_op, de_sym_pc_op, de_npc_op
-from pyexact.sparse_operators import sp_pc_op, sp_sym_pc_op, sp_npc_op
-from pyexact.dense_fermionic_operators import fer_de_pc_op
+from pyexact.dense_fermionic_operators import (
+    fer_de_pc_op, fer_de_sym_pc_op, fer_de_npc_op
+    )
+from pyexact.sparse_hardcore_operators import sp_pc_op, sp_sym_pc_op, sp_npc_op
+from pyexact.sparse_fermionic_operators import (
+    fer_sp_pc_op, fer_sp_sym_pc_op, fer_sp_npc_op
+    )
 
 
 def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None, is_fermionic=False):
@@ -57,7 +62,26 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None, is_fermionic=False):
             l = np.zeros(L, np.float64)
 
     # Select the properties of the Hamiltonian and compute it.
-    if not is_fermionic:
+    if is_fermionic:
+        if is_N_conserved:
+            if is_H_sparse:
+                if is_J_symmetric:
+                    v, r, c, ns = fer_sp_sym_pc_op(L, N, J, D)
+                else:
+                    v, r, c, ns = fer_sp_pc_op(L, N, J, D)
+                H = csr_matrix((v, (r, c)), shape=(ns, ns))
+            else:
+                if is_J_symmetric:
+                    H = fer_de_sym_pc_op(L, N, J, D)
+                else:
+                    H = fer_de_pc_op(L, N, J, D)
+        else:
+            if is_H_sparse:
+                v, r, c, ns = fer_sp_npc_op(L, J, D, r, l)
+                H = csr_matrix((v, (r, c)), shape=(ns, ns))
+            else:
+                H = fer_de_npc_op(L, J, D, r, l)
+    else:
         if is_N_conserved:
             if is_H_sparse:
                 if is_J_symmetric:
@@ -76,7 +100,5 @@ def build_mb_hamiltonian(J, D, L, N=None, r=None, l=None, is_fermionic=False):
                 H = csr_matrix((v, (r, c)), shape=(ns, ns))
             else:
                 H = de_npc_op(L, J, D, r, l)
-    else:
-        H = fer_de_pc_op(L, N, J, D)
 
     return H

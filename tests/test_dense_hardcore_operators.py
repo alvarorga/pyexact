@@ -241,7 +241,3 @@ class ManyBodyOperatorsTestCase(unittest.TestCase):
         self.assertAlmostEqual(D[15], 1)
         # Make sure that the other elts are 0.
         self.assertAlmostEqual(np.linalg.norm(D), 2)
-
-
-if __name__ == '__main__':
-    unittest.main()
