@@ -7,6 +7,7 @@ import numpy as np
 sys.path.append('../')
 from pyexact.sparse_operators import sp_pc_op, sp_sym_pc_op
 
+
 def benchmark_sparse_symmetric_number_conserving_op(L, N):
     """Benchmark construction of sym number conserving operator."""
     J = np.random.rand(L, L)
