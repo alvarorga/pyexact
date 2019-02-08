@@ -30,7 +30,7 @@ def de_pc_op(L, N, J, D):
     states = generate_states(L, N)
     num_states = states.size
 
-    H = np.zeros((num_states, num_states), np.float64)
+    H = np.zeros((num_states, num_states), J.dtype)
 
     # Notation:
     #     s: initial state.
