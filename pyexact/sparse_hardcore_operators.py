@@ -13,7 +13,7 @@ def count_nnz_off_diagonal(A):
     L = A.shape[0]
     for i in range(L):
         for j in range(L):
-            if (i != j) and (np.abs(A[i, j] > 1e-7)):
+            if (i != j) and (np.abs(A[i, j]) > 1e-7):
                 c += 1
     return c
 
