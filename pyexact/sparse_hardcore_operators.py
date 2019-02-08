@@ -42,7 +42,7 @@ def sp_pc_op(L, N, J, D):
     num_states = states.size
 
     number_nnz_vals = binom(L, N) + count_nnz_off_diagonal(J)*binom(L-2, N-1)
-    vals = np.zeros(number_nnz_vals, dtype=np.float64)
+    vals = np.zeros(number_nnz_vals, dtype=J.dtype)
     rows = np.zeros(number_nnz_vals, dtype=np.int32)
     cols = np.zeros(number_nnz_vals, dtype=np.int32)
 
