@@ -76,7 +76,7 @@ def de_sym_pc_op(L, N, J, D):
         H (2darray of floats): many-body operator.
 
     """
-    if np.sum((J - J.T)**2) > 1e-7:
+    if np.sum(np.abs(J - J.T)**2) > 1e-7:
         raise ValueError('J is not symmetric.')
 
     # Put all elts of D in the lower triangle. Making a copy of D
@@ -91,7 +91,7 @@ def de_sym_pc_op(L, N, J, D):
     states = generate_states(L, N)
     num_states = states.size
 
-    H = np.zeros((num_states, num_states), np.float64)
+    H = np.zeros((num_states, num_states), J.dtype)
 
     # Notation:
     #     s: initial state.
