@@ -3,7 +3,7 @@
 import numpy as np
 from numba import njit
 
-from pyexact.bitwise_funcs import binom, generate_states
+from pyexact.bitwise_funcs import binom, generate_states, binsearch
 
 
 @njit()
@@ -73,7 +73,7 @@ def sp_pc_op(L, N, J, D):
                 if (np.abs(J[i, j]) > 1e-6) and (j != i):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
-                        ix_t = np.where(states == t)[0][0]
+                        ix_t = binsearch(states, t)
                         vals[c] += J[i, j]
                         rows[c] += ix_t
                         cols[c] += ix_s
@@ -141,7 +141,7 @@ def sp_sym_pc_op(L, N, J, D):
                 if (np.abs(J[i, j]) > 1e-7):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
-                        ix_t = np.where(states == t)[0][0]
+                        ix_t = binsearch(states, t)
                         vals[c] += J[i, j]
                         rows[c] += ix_t
                         cols[c] += ix_s
@@ -277,7 +277,7 @@ def sp_pc_correlator(L, N, i, j):
     for ix_s, s in enumerate(states):
         if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
             t = s + (1<<i) - (1<<j)
-            ix_t = np.where(states == t)[0][0]
+            ix_t = binsearch(states, t)
             vals[c] += 1
             rows[c] = ix_t
             cols[c] = ix_s

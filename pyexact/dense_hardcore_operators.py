@@ -3,7 +3,7 @@
 import numpy as np
 from numba import njit, prange
 
-from pyexact.bitwise_funcs import generate_states
+from pyexact.bitwise_funcs import generate_states, binsearch
 
 
 # Hard-core boson operators.
@@ -48,7 +48,7 @@ def de_pc_op(L, N, J, D):
                     # Hopping terms: b^dagger_i b_j.
                     if not (s>>i)&1 and (s>>j)&1:
                         t = s + (1<<i) - (1<<j)
-                        ix_t = np.where(states == t)[0][0]
+                        ix_t = binsearch(states, t)
                         H[ix_t, ix_s] += J[i, j]
 
                     # Interaction terms: n_i n_j.
@@ -110,7 +110,7 @@ def de_sym_pc_op(L, N, J, D):
                 if np.abs(J[i, j]) > 1e-7:
                     if not (s>>i)&1 and (s>>j)&1:
                         t = s + (1<<i) - (1<<j)
-                        ix_t = np.where(states == t)[0][0]
+                        ix_t = binsearch(states, t)
                         H[ix_t, ix_s] += J[i, j]
                         H[ix_s, ix_t] += J[i, j]
 
@@ -224,7 +224,7 @@ def de_pc_correlator(L, N, i, j):
     for ix_s, s in enumerate(states):
         if (not (s>>i)&1) and ((s>>j)&1):
             t = s + (1<<i) - (1<<j)
-            ix_t = np.where(states==t)[0][0]
+            ix_t = binsearch(states, t)
             C[ix_t, ix_s] += 1
 
     return C

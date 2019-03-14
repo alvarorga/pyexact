@@ -145,3 +145,21 @@ def generate_states(size, N):
             pos += 1
 
     return states
+
+
+@njit()
+def binsearch(a, s):
+    """Binary search the element s in array a. Return index of s."""
+    lo = -1
+    hi = a.size
+    while hi-lo > 1:
+        m = (lo+hi)>>1
+        if a[m] <= s:
+            lo = m
+        else:
+            hi = m
+
+    if lo == -1 or a[lo] != s:
+        return -1
+    else:
+        return lo

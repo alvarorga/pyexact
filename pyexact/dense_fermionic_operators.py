@@ -3,7 +3,9 @@
 import numpy as np
 from numba import njit, prange
 
-from pyexact.bitwise_funcs import generate_states, get_parity, get_parity_at_i
+from pyexact.bitwise_funcs import (
+    generate_states, get_parity, get_parity_at_i, binsearch
+    )
 
 
 @njit(parallel=True)
@@ -46,7 +48,7 @@ def fer_de_pc_op(L, N, J, D):
                     if not (s>>i)&1 and (s>>j)&1:
                         t = s + (1<<i) - (1<<j)
                         par = get_parity(t, i, j)
-                        ix_t = np.where(states == t)[0][0]
+                        ix_t = binsearch(states, t)
                         H[ix_t, ix_s] += par*J[i, j]
 
                     # Interaction terms: n_i n_j.
@@ -109,7 +111,7 @@ def fer_de_sym_pc_op(L, N, J, D):
                     if not (s>>i)&1 and (s>>j)&1:
                         t = s + (1<<i) - (1<<j)
                         par = get_parity(t, i, j)
-                        ix_t = np.where(states == t)[0][0]
+                        ix_t = binsearch(states, t)
                         H[ix_t, ix_s] += par*J[i, j]
                         H[ix_s, ix_t] += par*J[i, j]
 
@@ -202,7 +204,7 @@ def fer_de_pc_correlator(L, N, i, j):
         if (not (s>>i)&1) and ((s>>j)&1):
             t = s + (1<<i) - (1<<j)
             par = get_parity(t, i, j)
-            ix_t = np.where(states==t)[0][0]
+            ix_t = binsearch(states, t)
             C[ix_t, ix_s] += par
 
     return C

@@ -7,7 +7,8 @@ import numpy as np
 
 sys.path.append('../')
 from pyexact.bitwise_funcs import (
-    binom, count_bits, get_parity, get_parity_at_i, generate_states
+    binom, count_bits, get_parity, get_parity_at_i, generate_states,
+    binsearch
     )
 
 
@@ -78,3 +79,14 @@ class GenerateStatesTestCase(unittest.TestCase):
         self.assertTrue(np.allclose(generate_states(4, 3), s))
         s = np.array([7, 11, 13, 14, 19, 21, 22, 25, 26, 28])
         self.assertTrue(np.allclose(generate_states(5, 3), s))
+
+
+class BinarySearchTestCase(unittest.TestCase):
+    """Tests for the binary search function."""
+
+    def test_binary_search(self):
+        """Test generated states for some combinations."""
+        a = np.arange(0, 18, 2)
+        for i in range(9):
+            ix = binsearch(a, 2*i)
+            self.assertEqual(ix, i)

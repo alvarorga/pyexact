@@ -4,7 +4,7 @@ import numpy as np
 from numba import njit
 
 from pyexact.bitwise_funcs import (
-    binom, generate_states, get_parity, get_parity_at_i
+    binom, generate_states, get_parity, get_parity_at_i, binsearch
     )
 
 
@@ -75,7 +75,7 @@ def fer_sp_pc_op(L, N, J, D):
                 if (np.abs(J[i, j]) > 1e-6) and (j != i):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
-                        ix_t = np.where(states == t)[0][0]
+                        ix_t = binsearch(states, t)
                         par = get_parity(s, i, j)
                         vals[c] += par*J[i, j]
                         rows[c] += ix_t
@@ -144,7 +144,7 @@ def fer_sp_sym_pc_op(L, N, J, D):
                 if (np.abs(J[i, j]) > 1e-7):
                     if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
                         t = s + (1<<i) - (1<<j)
-                        ix_t = np.where(states == t)[0][0]
+                        ix_t = binsearch(states, t)
                         par = get_parity(s, i, j)
                         vals[c] += par*J[i, j]
                         rows[c] += ix_t
@@ -285,7 +285,7 @@ def fer_sp_pc_correlator(L, N, i, j):
     for ix_s, s in enumerate(states):
         if (not (s>>i)&np.uint16(1)) and ((s>>j)&np.uint16(1)):
             t = s + (1<<i) - (1<<j)
-            ix_t = np.where(states == t)[0][0]
+            ix_t = binsearch(states, t)
             par = get_parity(s, i, j)
             vals[c] += par
             rows[c] = ix_t
