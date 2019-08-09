@@ -50,7 +50,7 @@ def compute_P(state, L, N=None, is_fermionic=False, force_sparse=False):
         # Number operator.
         for i in range(L):
             ni = de_pc_number_op(L, N, i)
-            P[i, i] = np.dot(ni, state**2)
+            P[i, i] = np.dot(ni, np.abs(state)**2)
 
         # Correlation terms.
         for i in range(L):
@@ -76,7 +76,7 @@ def compute_P(state, L, N=None, is_fermionic=False, force_sparse=False):
         # Number operator.
         for i in range(L):
             ni = de_npc_number_op(L, i)
-            P[i, i] = np.dot(ni, state**2)
+            P[i, i] = np.dot(ni, np.abs(state)**2)
 
         # Correlation terms.
         for i in range(L):
@@ -123,15 +123,19 @@ def compute_D(state, L, N=None):
 
     if is_N_conserved:
         for i in range(L):
+            ni = de_pc_number_op(L, N, i)
+            D[i, i] = np.dot(ni, np.abs(state)**2)
             for j in range(i):  # j < i.
                 ninj = de_pc_interaction(L, N, i, j)
-                D[i, j] = np.dot(ninj, state**2)
+                D[i, j] = np.dot(ninj, np.abs(state)**2)
                 D[j, i] = D[i, j]
     else:
         for i in range(L):
+            ni = de_npc_number_op(L, i)
+            D[i, i] = np.dot(ni, np.abs(state)**2)
             for j in range(i):  # j < i.
                 ninj = de_npc_interaction(L, i, j)
-                D[i, j] = np.dot(ninj, state**2)
+                D[i, j] = np.dot(ninj, np.abs(state)**2)
                 D[j, i] = D[i, j]
 
     return D
