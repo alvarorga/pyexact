@@ -8,7 +8,7 @@ import numpy as np
 sys.path.append('../')
 from pyexact.bitwise_funcs import (
     binom, count_bits, get_parity, get_parity_at_i, generate_states,
-    binsearch
+    generate_spin1_states, binsearch
     )
 
 
@@ -90,3 +90,31 @@ class BinarySearchTestCase(unittest.TestCase):
         for i in range(9):
             ix = binsearch(a, 2*i)
             self.assertEqual(ix, i)
+
+
+class GenerateSpin1StatesTestCase(unittest.TestCase):
+    """Tests for the generate spin 1 states function."""
+
+    def test_some_generated_spin1_states(self):
+        """Test generated spin1 states for some combinations."""
+        # L = 4, Sz = 2.
+        gs = generate_spin1_states(4, 2)
+        self.assertEqual(np.size(gs), 10)
+        self.assertEqual(gs[0], 5)
+        self.assertEqual(gs[1], 17)
+        self.assertEqual(gs[2], 20)
+        self.assertEqual(gs[3], 65)
+        self.assertEqual(gs[4], 68)
+        self.assertEqual(gs[6], 86)
+        self.assertEqual(gs[7], 89)
+        self.assertEqual(gs[9], 149)
+
+        # L = 4, Sz = 1.
+        gs = generate_spin1_states(4, 1)
+        self.assertEqual(np.size(gs), 16)
+        self.assertEqual(gs[0], 1)
+        self.assertEqual(gs[2], 16)
+        self.assertEqual(gs[4], 25)
+        self.assertEqual(gs[7], 70)
+        self.assertEqual(gs[9], 82)
+        self.assertEqual(gs[15], 148)

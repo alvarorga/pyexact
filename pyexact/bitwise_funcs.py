@@ -163,3 +163,51 @@ def binsearch(a, s):
         return -1
     else:
         return lo
+
+
+@njit()
+def generate_spin1_states(L, Sz):
+    """Generate all states of spin 1 with L sites and magnetization Sz.
+    
+    There can be 3 states per individual site/spin. In the usual notation
+    these are: |1, 0>, |1, 1>, |1, -1>. Because we can't represent these
+    states with only one bit of information we map each site to the three
+    possible states:
+    * |1, 0> = (00)
+    * |1, 1> = (01)
+    * |1,-1> = (10)
+    For example, a state with three spins, with magnetization -1, 1, 0 in
+    each site, respectively, is represented as: 100100.
+    """
+    # Count number of states.
+    num_states = 0
+    # We start with Sz spins up (down) if Sz is positive (negative) and
+    # the rest set to 0, then we add one up and one down until we reach
+    # the size of the chain.
+    Nu = Sz if Sz >= 0 else 0
+    Nd = -Sz if Sz < 0 else 0
+    while Nu + Nd <= L:
+        num_states += binom(L, Nu)*binom(L-Nu, Nd)
+        Nu += 1
+        Nd += 1
+
+    # Generate states.
+    states = np.zeros(num_states, dtype=np.uint32)
+
+    cont = 0
+    max_state = 1<<(2*L)
+    for s in range(max_state):
+        # Count Sz.
+        state_sz = 0
+        is_valid = True
+        for j in range(L):
+            state_sz += (s>>(2*j))&1
+            state_sz -= (s>>(2*j+1))&1
+            # If bits at 2*j are 11 discard this state.
+            if (s>>(2*j))&3 == 3:
+                is_valid = False
+        if state_sz == Sz and is_valid:
+            states[cont] = s
+            cont += 1
+
+    return states
