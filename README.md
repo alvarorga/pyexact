@@ -12,18 +12,6 @@ testing, may not work with older ones):
 * Numba (0.38.0)(if you cannot install Numba then you could remove all
     `@njit()` decorators above the functions, but the scripts will run
      much slower)
-* Sphinx (1.7.4)(only for building the documentation)
-
-## Documentation
-I have not yet uploaded the docs to the Internet, but in the meantime
-you can go to the *docs* directory and put in the console
-```shell
-$ make html
-```
-This will create a set of *.html* pages in the directory *docs/_build*
-with the documentation, which explains the usage of the package. In
-case you cannot see the docs, a brief summary of the usage is appended
-here.
 
 ### Usage
 
